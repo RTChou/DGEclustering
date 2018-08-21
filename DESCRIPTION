@@ -6,6 +6,6 @@ Author: Renee Ti Chou
 Maintainer: Renee Ti Chou <reneechou123@gmail.com>
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: GPL3
+License: MIT
 Encoding: UTF-8
 LazyData: true
