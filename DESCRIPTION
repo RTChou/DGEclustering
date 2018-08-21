@@ -1,0 +1,11 @@
+Package: DGEclustering
+Type: Package
+Title: Differential Gene Expressions Clustering Integrated with GO Terms
+Version: 0.1.0
+Author: Renee Ti Chou
+Maintainer: Renee Ti Chou <reneechou123@gmail.com>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: GPL3
+Encoding: UTF-8
+LazyData: true
