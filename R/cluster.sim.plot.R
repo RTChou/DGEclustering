@@ -1,12 +1,15 @@
 #' @export
+#' @import AnnotationDbi
+#' @import clusterProfiler
+#' @import ggplot2
 cluster.sim.plot <- function(method1.groups, method2.groups, OrgDb, keytype, ont='BP', method1.name='method 1', method2.name='method 2'){
   sim.matrix <- matrix(NA, nrow=length(method1.groups), ncol=length(method2.groups))
   for (i in 1:length(method1.groups)){
     for (j in 1:length(method2.groups)){
-      c1 <- AnnotationDbi::mapIds(OrgDb, keys=unlist(method1.groups[i]), column="ENTREZID", keytype=keytype, multiVals="first")
-      c2 <- AnnotationDbi::mapIds(OrgDb, keys=unlist(method2.groups[j]), column="ENTREZID", keytype=keytype, multiVals="first")
-      semData <- clusterProfiler::godata(OrgDb=OrgDb, ont=ont, computeIC=FALSE)
-      sim.matrix[i, j] <- clusterProfiler::clusterSim(c1, c2, semData=semData, measure='Wang')
+      c1 <- mapIds(OrgDb, keys=unlist(method1.groups[i]), column="ENTREZID", keytype=keytype, multiVals="first")
+      c2 <- mapIds(OrgDb, keys=unlist(method2.groups[j]), column="ENTREZID", keytype=keytype, multiVals="first")
+      semData <- godata(OrgDb=OrgDb, ont=ont, computeIC=FALSE)
+      sim.matrix[i, j] <- clusterSim(c1, c2, semData=semData, measure='Wang')
     }
   }
   rownames(sim.matrix) <- paste('cluster', 1:length(method1.groups))
@@ -20,7 +23,7 @@ cluster.sim.plot <- function(method1.groups, method2.groups, OrgDb, keytype, ont
   sim.matrix <- temp
   melted.sim.matrix <- melt(sim.matrix)
 
-  ggplot2::ggplot(data=melted.sim.matrix, aes(x=Var1, y=Var2)) +
+  ggplot(data=melted.sim.matrix, aes(x=Var1, y=Var2)) +
     geom_tile(aes(fill=value)) +
     theme_classic() +
     scale_fill_gradientn(colours=rev(grDevices::heat.colors(10))) +

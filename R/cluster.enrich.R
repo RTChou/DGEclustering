@@ -1,7 +1,9 @@
 #' @export
+#' @import clusterProfiler
+#' @import ggplot2
 cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top=10){
   universe <- sapply(BgGenes, as.character)
-  GO.cluster.res <- as.data.frame(clusterProfiler::compareCluster(clusterGroups, fun='enrichGO', OrgDb=org.db, keyType=keyType, ont=ont, universe=universe))
+  GO.cluster.res <- as.data.frame(compareCluster(clusterGroups, fun='enrichGO', OrgDb=org.db, keyType=keyType, ont=ont, universe=universe))
 
   # select top significant terms
   temp <- split(GO.cluster.res, GO.cluster.res$Cluster)
@@ -26,7 +28,7 @@ cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top
   # dot plotting
   GO.cluster.res['Percentage'] <- sapply(GO.cluster.res$GeneRatio, function(x) round(eval(parse(text=x)), 2))
   GO.cluster.res['Description'] <- factor(GO.cluster.res$Description, rev(as.character(unique(GO.cluster.res$Description))))
-  ggplot2::ggplot(GO.cluster.res, aes(x=Cluster, y=Description, size=Percentage)) +
+  ggplot(GO.cluster.res, aes(x=Cluster, y=Description, size=Percentage)) +
     geom_point() +
     theme_bw() +
     aes_string(color='p.adjust') +

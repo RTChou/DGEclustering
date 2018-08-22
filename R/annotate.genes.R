@@ -1,4 +1,5 @@
 #' @export
+#' @import clusterProfiler
 annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=FALSE, BgGenes=NULL, ont='ALL'){
   dataset <- pairedDataset
   universe <- BgGenes
@@ -12,7 +13,7 @@ annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=
   }
   else {
     # GO enrichment
-    GO.res <- clusterProfiler::enrichGO(gene=dataset$EntrezID, OrgDb=OrgDb, keyType=keyType, ont=ont, universe=universe)
+    GO.res <- enrichGO(gene=dataset$EntrezID, OrgDb=OrgDb, keyType=keyType, ont=ont, universe=universe)
   }
 
   # construct binary GO term matrix

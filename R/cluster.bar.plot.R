@@ -1,4 +1,5 @@
 #' @export
+#' @import ggplot2
 cluster.bar.plot <- function(method1.groups, method2.groups, method1.name='method 1', method2.name='method 2', color=NULL){
   percent.matrix <- matrix(NA, nrow=length(method1.groups), ncol=length(method2.groups))
   for (i in 1:length(method1.groups)){
@@ -13,7 +14,7 @@ cluster.bar.plot <- function(method1.groups, method2.groups, method1.name='metho
   if (is.null(color))
     color <- c('#0000ff', '#4000bf', '#80007f', '#c0003f', '#fe0100', '#be4100', '#7e8100', '#3ec100', '#00ff00')
 
-  ggplot2::ggplot(data=stackedMatrix, aes(x=ind2, y=values, fill=ind)) +
+  ggplot(data=stackedMatrix, aes(x=ind2, y=values, fill=ind)) +
     geom_bar(stat="identity", alpha=0.6) +
     theme_classic() +
     scale_fill_manual(values=color) +

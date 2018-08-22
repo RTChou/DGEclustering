@@ -1,9 +1,7 @@
-#' @importMethodsFrom  InteGO Integration
-#' @importMethodsFrom  InteGO MCAsimple
-#' @importMethodsFrom  InteGO clustering
-#' @importMethodsFrom cluster agnes
-#' @importMethodsFrom rlist list.append
 #' @export
+#' @import InteGO
+#' @import cluster
+#' @import rlist
 DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO = 4, LIM.COR = 0.5){
   nb.dim.ex = ncol(expressions)
   nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
