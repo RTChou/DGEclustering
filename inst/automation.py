@@ -15,12 +15,23 @@ def main():
     parser = argparse.ArgumentParser(description="This script is for RNA-seq DGE downstream workflow automation")
     parser.add_argument('-d', '--root_dir', required=True, help='starting directory')
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
-    parser.add_argument('-q', '--qvalue', default=0.05, type=float,  help='adjusted pvalue threshold')
+    parser.add_argument('-x', '--qvalue_x', default=0.05, type=float, help='adjusted pvalue for scatter plot x axis')
+    parser.add_argument('-y', '--qvalue_y', default=0.05, type=float,  help='adjusted pvalue for scatter plot y axis')
+    parser.add_argument('-q', '--qq_plot', default=True, type=bool,  help='generate Q-Q plots')
+    parser.add_argument('-f', '--fish_plot', default=True, type=bool,  help='generate fish plots')
+    parser.add_argument('-s', '--scatter_plot', default=True, type=bool,  help='generate scatter plots')
     args = parser.parse_args()
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
-    os.system('mkdir -p ' + args.root_dir + '/scatter_plot ' + args.root_dir + '/fish_plot ' + args.root_dir + '/qq_plot ' +  args.root_dir + '/sig_genes')
-    os.system('rm -f ' + args.root_dir + '/scatter_plot/* ' + args.root_dir + '/fish_plot/* ' + args.root_dir + '/qq_plot/* ' +  args.root_dir + '/sig_genes/*')
+    if args.qq_plot == True:
+        os.system('mkdir -p ' + args.root_dir + '/qq_plot')
+        os.system('rm -f ' + args.root_dir + '/qq_plot/*')
+    if args.fish_plot == True:
+        os.system('mkdir -p ' + args.root_dir + '/fish_plot')
+        os.system('rm -f ' + args.root_dir + '/fish_plot/*')
+    if args.scatter_plot == True:
+        os.system('mkdir -p ' + args.root_dir + '/scatter_plot ' + args.root_dir + '/sig_genes')
+        os.system('rm -f ' + args.root_dir + '/scatter_plot/* ' + args.root_dir + '/sig_genes')
 
     # recursively search for candidate tsv and Rmd files
     os.system('find ' + args.root_dir + ' -name "rnaseq*.Rmd" > rmd_filepaths')
@@ -122,22 +133,26 @@ def main():
         """
 
         # emit plots and diagnostics
-        temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plot', dat_out_dir=args.root_dir+'/sig_genes', padj_threshold=args.qvalue)
-        if temp['discordant_path'] is not None:            
-            c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
-        if temp['concordant_path'] is not None:
-            c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['concordant_path'],))
-        plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plot')
-        plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', file_path=paired_file['file_1'])
-        plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', file_path=paired_file['file_2'])
+        if args.qq_plot == True:
+            plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', file_path=paired_file['file_1'])
+            plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', file_path=paired_file['file_2'])
+        if args.fish_plot == True:
+            plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plot')
+        if args.scatter_plot == True:
+            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plot', dat_out_dir=args.root_dir+'/sig_genes', padj_threshold=args.qvalue)
+            if temp['discordant_path'] is not None:            
+                c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
+            if temp['concordant_path'] is not None:
+                c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['concordant_path'],))
 
     conn.commit()
     conn.close()
 
     # generate null Q-Q plot
-    random.seed(123)
-    dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
-    plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', dataset=dataset)
+    if args.qq_plot == True:
+        random.seed(123)
+        dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
+        plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', dataset=dataset)
 
 
 if __name__ == '__main__':
