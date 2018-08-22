@@ -9,6 +9,7 @@ Description: More about what it does (maybe more than one line)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
+Depends: FactoMineR, cluster
 Imports: clusterProfiler,
     AnnotationDbi,
     ggplot2,
@@ -16,6 +17,5 @@ Imports: clusterProfiler,
     rlist,
     reshape2,
     GOSemSim,
-    cluster,
     GenomicFeatures
 RoxygenNote: 6.1.0
