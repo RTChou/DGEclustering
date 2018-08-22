@@ -13,7 +13,7 @@ cluster.bar.plot <- function(method1.groups, method2.groups, method1.name='metho
   if (is.null(color))
     color <- c('#0000ff', '#4000bf', '#80007f', '#c0003f', '#fe0100', '#be4100', '#7e8100', '#3ec100', '#00ff00')
 
-  ggplot(data=stackedMatrix, aes(x=ind2, y=values, fill=ind)) +
+  ggplot2::ggplot(data=stackedMatrix, aes(x=ind2, y=values, fill=ind)) +
     geom_bar(stat="identity", alpha=0.6) +
     theme_classic() +
     scale_fill_manual(values=color) +

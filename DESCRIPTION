@@ -10,12 +10,12 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: clusterProfiler,
-    AnnotationHub,
     AnnotationDbi,
     ggplot2,
     InteGO,
     rlist,
     reshape2,
     GOSemSim,
-    cluster
+    cluster,
+    GenomicFeatures
 RoxygenNote: 6.1.0

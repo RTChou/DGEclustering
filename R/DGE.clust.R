@@ -3,13 +3,13 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   nb.dim.ex = ncol(expressions)
   nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
 
-  annotations.sep = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
+  annotations.sep = InteGO::Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
   annotations.sep <- apply(annotations.sep, 2, as.factor)
-  MCA = MCAsimple(annotations.sep)[, 1:nb.dim.an]
+  MCA = InteGO::MCAsimple(annotations.sep)[, 1:nb.dim.an]
 
   if (clust.method != 'genclust'){
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
-    groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
+    groups <- InteGO::clustering(DIST, mode='Classification', nb.group=nb.group)
   }
 
   else {
@@ -102,7 +102,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
       string.list <- unlist(strsplit(gen.out[row, 1], ' '))
       if (string.list[1] == 'CLUSTER') {
         if (g > 0) {
-          x <- list.append(x, temp)
+          x <- rlist::list.append(x, temp)
         }
         g <- g + 1
         temp <- c()
@@ -113,7 +113,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
         i <- i + 1
       }
     }
-    groups <- list.append(x, temp)
+    groups <- rlist::list.append(x, temp)
     names(groups) = paste('Group', 1:g, sep = '.')
   }
 
