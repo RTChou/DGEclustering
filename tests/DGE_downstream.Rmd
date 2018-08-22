@@ -1,0 +1,76 @@
+---
+title: "DGE_downstream"
+author: "Renee Ti Chou"
+date: "August 22, 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE)
+```
+
+```{r}
+library(DGEclustering)
+setwd('~/Downloads/dictyostelium_2/test')
+```
+
+# Automation
+```{r}
+automation(rootDir='./', geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
+```
+
+# Download organism database
+```{r}
+hub <- AnnotationHub::.Hub("AnnotationHub",
+        getAnnotationHubOption("URL"),
+
+        # Cache location is specific to this instance of lcdb-wf so we don't
+        # clobber old runs with new annotation data
+        './AnnotationHubCache',
+
+        httr::use_proxy(Sys.getenv("http_proxy")),
+        FALSE)
+org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
+key.type <- 'SYMBOL'
+```
+
+# Gene annotation
+```{r}
+paired.dat <- 'filepath'
+bg.genes <- 'filepath'['GENEID']
+dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol='GENEID', GOEnrichment=FALSE, BgGenes=bg.genes)
+```
+
+# Prepare input datasets for clustering
+```{r}
+expressions <- scale(dat[, c(2, 6, 8, 12)])
+rownames(expressions) <- dat[,'GENEID_x']
+
+annotations <- dat[, c(14:ncol(dat)), drop=FALSE]
+sum(apply(annotations, 2, sum) >= 20)
+annotations <- annotations[, apply(annotations, 2, sum) >= 20]
+rownames(annotations) <- dat[,'GENEID_x']
+```
+
+# Gene clustering
+```{r}
+res <- DGE.clust(expressions, annotations, clust.method='intego', nb.group=8)
+write.table(stack(res$groups), 'intego_result.tsv', sep='\t', row.names=FALSE)
+```
+
+# Cluster visualization
+```{r}
+filepath1 <- 'filepath1'
+filepath2 <- 'filepath2'
+cluster.filepath <- 'intego_result.tsv'
+cluster.plot(outDir='./', filepath1=filepath1, filepath2=filepath2, clusterFilePath=cluster.filepath, geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
+```
+
+# Cluster GO enrichment (plotting)
+```{r}
+bg.genes <- 'filepath'['GENEID']
+cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='BP', top=10)
+```
+
+
+
