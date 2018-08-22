@@ -37,7 +37,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     gen.input <- rbind(line1, line2, gen.input)
     write.table(
       gen.input,
-      file = paste(package.dir, 'inst/genclust_sig_data.tsv', sep='/'),
+      file = paste(package.dir, 'genclust_sig_data.tsv', sep='/'),
       sep = '\t',
       col.names = FALSE,
       row.names = FALSE,
@@ -93,7 +93,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
     # import genclust result
     gen.out <-
-      read.table(paste(package.dir, 'inst/genclust_out.txt', sep='/'),
+      read.table(paste(package.dir, 'genclust_out.txt', sep='/'),
                  header = FALSE,
                  sep = '\t')
     gen.out[] <- lapply(gen.out, as.character)
