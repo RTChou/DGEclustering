@@ -1,13 +1,13 @@
 #' @export
 DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO = 4, LIM.COR = 0.5){
-  nb.dim.ex = nrow(expressions)
+  nb.dim.ex = ncol(expressions)
   nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
 
   annotations.sep = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
   annotations.sep <- apply(annotations.sep, 2, as.factor)
   MCA = MCAsimple(annotations.sep)[, 1:nb.dim.an]
 
-  if (cluster.method == 'intego'){
+  if (clust.method != 'genclust'){
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     res <- list(groups, annotations.sep, MCA)
@@ -46,7 +46,7 @@ DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.grou
     )
 
     # generate initialization file
-    filepath <- paste(packae.dir, 'src/out.tmp', sep='/')
+    filepath <- paste(package.dir, 'src/out.tmp', sep='/')
     fileConn <- file(filepath)
     write('#Comment\n#Comment',
           filepath,
