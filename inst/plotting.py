@@ -8,19 +8,27 @@ from matplotlib.offsetbox import AnchoredText
 from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
-def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', padj_threshold=0.05, for_cluster_plot=False, return_sig_plot=False):
+def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adjusted_pvalue=True, for_cluster_plot=False, return_sig_plot=False):
     
     plt.close()
     dataset = pd.read_table(file_path_1)
     dataset_2 = pd.read_table(file_path_2)
     merged_set = dataset.merge(dataset_2, left_on=dataset.columns[0], right_on=dataset_2.columns[0])
     
-    sig_vs_sig = merged_set[(merged_set['padj_x'] < padj_threshold) & (merged_set['padj_y'] < padj_threshold)]
-    sig_vs_NS = merged_set[(merged_set['padj_x'] < padj_threshold) & (merged_set['padj_y'] >= padj_threshold)]
-    NS_vs_sig = merged_set[(merged_set['padj_x'] >= padj_threshold) & (merged_set['padj_y'] < padj_threshold)]
-    NS_vs_NS = merged_set[(merged_set['padj_x'] >= padj_threshold) & (merged_set['padj_y'] >= padj_threshold)]
-    non_NA_set = merged_set[(merged_set.isna()['padj_x'] == False) & (merged_set.isna()['padj_y'] == False)]
-   
+    if adjusted_pvalue == True:
+        sig_vs_sig = merged_set[(merged_set['padj_x'] < x_threshold) & (merged_set['padj_y'] < y_threshold)]
+        sig_vs_NS = merged_set[(merged_set['padj_x'] < x_threshold) & (merged_set['padj_y'] >= y_threshold)]
+        NS_vs_sig = merged_set[(merged_set['padj_x'] >= x_threshold) & (merged_set['padj_y'] < y_threshold)]
+        NS_vs_NS = merged_set[(merged_set['padj_x'] >= x_threshold) & (merged_set['padj_y'] >= y_threshold)]
+        non_NA_set = merged_set[(merged_set.isna()['padj_x'] == False) & (merged_set.isna()['padj_y'] == False)]
+    
+    else:
+        sig_vs_sig = merged_set[(merged_set['pvalue_x'] < x_threshold) & (merged_set['pvalue_y'] < y_threshold)]
+        sig_vs_NS = merged_set[(merged_set['pvalue_x'] < x_threshold) & (merged_set['pvalue_y'] >= y_threshold)]
+        NS_vs_sig = merged_set[(merged_set['pvalue_x'] >= x_threshold) & (merged_set['pvalue_y'] < y_threshold)]
+        NS_vs_NS = merged_set[(merged_set['pvalue_x'] >= x_threshold) & (merged_set['pvalue_y'] >= y_threshold)]
+        non_NA_set = merged_set[(merged_set.isna()['pvalue_x'] == False) & (merged_set.isna()['pvalue_y'] == False)]  
+
     sig_discordant = sig_vs_sig[((sig_vs_sig['log2FoldChange_x'] < 0) & (sig_vs_sig['log2FoldChange_y'] > 0)) | 
              ((sig_vs_sig['log2FoldChange_x'] > 0) & (sig_vs_sig['log2FoldChange_y'] < 0))]    
     sig_concordant = sig_vs_sig[((sig_vs_sig['log2FoldChange_x'] >= 0) & (sig_vs_sig['log2FoldChange_y'] >=0)) |

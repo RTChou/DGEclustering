@@ -15,8 +15,9 @@ def main():
     parser = argparse.ArgumentParser(description="This script is for RNA-seq DGE downstream workflow automation")
     parser.add_argument('-d', '--root_dir', required=True, help='starting directory')
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
-    parser.add_argument('-x', '--qvalue_x', default=0.05, type=float, help='adjusted pvalue for scatter plot x axis')
-    parser.add_argument('-y', '--qvalue_y', default=0.05, type=float,  help='adjusted pvalue for scatter plot y axis')
+    parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
+    parser.add_argument('-y', '--y_threshold', default=0.05, type=float,  help='(adjusted) pvalue for scatter plot y axis')
+    parser.add_argument('-a', '--adjusted_pvalue', default=True, type=bool, help='whether to use adjusted pvalue or pvalue')
     parser.add_argument('-q', '--qq_plot', default=True, type=bool,  help='generate Q-Q plots')
     parser.add_argument('-f', '--fish_plot', default=True, type=bool,  help='generate fish plots')
     parser.add_argument('-s', '--scatter_plot', default=True, type=bool,  help='generate scatter plots')
@@ -139,7 +140,7 @@ def main():
         if args.fish_plot == True:
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plot')
         if args.scatter_plot == True:
-            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plot', dat_out_dir=args.root_dir+'/sig_genes', padj_threshold=args.qvalue)
+            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plot', dat_out_dir=args.root_dir+'/sig_genes', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adjusted_pvalue=args.adjusted_pvalue)
             if temp['discordant_path'] is not None:            
                 c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
             if temp['concordant_path'] is not None:
