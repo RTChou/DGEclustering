@@ -7,7 +7,7 @@ DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.grou
   annotations.sep <- apply(annotations.sep, 2, as.factor)
   MCA = MCAsimple(annotations.sep)[, 1:nb.dim.an]
 
-  if (clust.method != 'genclust'){
+  if (cluster.method != 'genclust'){
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     res <- list(groups, annotations.sep, MCA)
