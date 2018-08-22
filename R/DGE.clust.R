@@ -82,14 +82,13 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     # run genclust
     system(
       paste(paste(package.dir, 'genclust', sep='/'),
-        'genclust_sig_data.tsv',
-        nb.group,
-        nb.generation,
-        'genclust_out.txt',
-        0,
-        0
-      ), ignore.stdout = TRUE
-    )
+            paste(package.dir, 'genclust_sig_data.tsv', sep='/'),
+            nb.group,
+            nb.generation,
+            paste(package.dir, 'genclust_out.txt', sep='/'),
+            0,
+            0
+            ), ignore.stdout = TRUE)
 
     # import genclust result
     gen.out <-
