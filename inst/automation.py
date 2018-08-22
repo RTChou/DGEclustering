@@ -32,7 +32,7 @@ def main():
         os.system('rm -f ' + args.root_dir + 'fish_plot/*')
     if args.scatter_plot == True:
         os.system('mkdir -p ' + args.root_dir + 'scatter_plot ' + args.root_dir + 'sig_genes')
-        os.system('rm -f ' + args.root_dir + 'scatter_plot/* ' + args.root_dir + 'sig_genes')
+        os.system('rm -f ' + args.root_dir + 'scatter_plot/* ' + args.root_dir + 'sig_genes/*')
 
     # recursively search for candidate tsv and Rmd files
     os.system('find ' + args.root_dir + ' -name "rnaseq*.Rmd" > rmd_filepaths')
