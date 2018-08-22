@@ -154,7 +154,6 @@ def main():
         dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
         plotting.qq_plot(output_dir=args.root_dir+'/qq_plot', dataset=dataset)
 
-
 if __name__ == '__main__':
     main()
 
