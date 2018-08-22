@@ -37,7 +37,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     gen.input <- rbind(line1, line2, gen.input)
     write.table(
       gen.input,
-      file = paste(package.dir, 'src/genclust_sig_data.tsv', sep='/'),
+      file = paste(package.dir, 'inst/genclust_sig_data.tsv', sep='/'),
       sep = '\t',
       col.names = FALSE,
       row.names = FALSE,
@@ -46,7 +46,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     )
 
     # generate initialization file
-    filepath <- paste(package.dir, 'src/out.tmp', sep='/')
+    filepath <- paste(package.dir, 'inst/out.tmp', sep='/')
     fileConn <- file(filepath)
     write('#Comment\n#Comment',
           filepath,
@@ -81,7 +81,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
     # run genclust
     system(
-      paste(paste(package.dir, 'src/genclust', sep='/'),
+      paste(paste(package.dir, 'inst/genclust', sep='/'),
         'genclust_sig_data.tsv',
         nb.group,
         nb.generation,
@@ -93,7 +93,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
     # import genclust result
     gen.out <-
-      read.table(paste(package.dir, 'src/genclust_out.txt', sep='/'),
+      read.table(paste(package.dir, 'inst/genclust_out.txt', sep='/'),
                  header = FALSE,
                  sep = '\t')
     gen.out[] <- lapply(gen.out, as.character)
