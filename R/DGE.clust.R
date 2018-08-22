@@ -10,7 +10,6 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   if (clust.method != 'genclust'){
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
-    res <- list(groups, annotations.sep, MCA)
   }
 
   else {
@@ -116,9 +115,9 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     }
     groups <- list.append(x, temp)
     names(groups) = paste('Group', 1:g, sep = '.')
-    res <- list(groups)
   }
 
+  res <- list(groups, annotations.sep, MCA)
   names(res) <- c('groups', 'annotations.sep', 'MCA')
   return(res)
 }
