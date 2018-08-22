@@ -17,7 +17,7 @@ def main():
     parser.add_argument('-f1', '--file_1', required=True, help='first file path of the paired files')
     parser.add_argument('-f2', '--file_2', required=True, help='second file path of the paired files')
     parser.add_argument('-r', '--clustering_result', required=True, help='file path of the clustering result')
-    parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
+    parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float,  help='(adjusted) pvalue for scatter plot y axis')
     parser.add_argument('-a', '--adj_pvalue', default=True, type=bool, help='whether to use adjusted pvalue or pvalue')
