@@ -1,5 +1,5 @@
 #' @export
-DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO = 4, LIM.COR = 0.5){
+DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO = 4, LIM.COR = 0.5){
   nb.dim.ex = ncol(expressions)
   nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
 
@@ -7,7 +7,7 @@ DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.grou
   annotations.sep <- apply(annotations.sep, 2, as.factor)
   MCA = MCAsimple(annotations.sep)[, 1:nb.dim.an]
 
-  if (cluster.method != 'genclust'){
+  if (clust.method != 'genclust'){
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     res <- list(groups, annotations.sep, MCA)
@@ -81,7 +81,7 @@ DGE.clust <- function(expressions, annotations, cluster.method='intego', nb.grou
 
     # run genclust
     system(
-      paste(paste(package.dir, 'src/genclust_sig_data.tsv', sep='/'),
+      paste(paste(package.dir, 'src/genclust', sep='/'),
         'genclust_sig_data.tsv',
         nb.group,
         nb.generation,
