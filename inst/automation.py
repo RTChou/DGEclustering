@@ -14,7 +14,7 @@ import random
 def main():
     parser = argparse.ArgumentParser(description="This script is for RNA-seq DGE downstream workflow automation")
     parser.add_argument('-d', '--root_dir', required=True, help='starting directory')
-    parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name')
+    parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float,  help='(adjusted) pvalue for scatter plot y axis')
     parser.add_argument('-a', '--adj_pvalue', default=True, type=bool, help='whether to use adjusted pvalue or pvalue')
@@ -109,7 +109,7 @@ def main():
         for filepath_2 in deseq2_outputs[index+1:len(deseq2_outputs)]:
             dataset = pd.read_table(filepath, sep='\t')
             dataset_2 = pd.read_table(filepath_2, sep='\t')
-            if dataset.shape[0] == dataset_2.shape[0]:
+            if dataset.shape[0] == dataset_2.shape[0] and dataset.shape[1] == dataset_2.shape[1]:
                 comparison = pd.DataFrame(columns=['result'])
                 comparison['result'] = np.where(dataset[column_name] == dataset_2[column_name], True, False)
                 c_series = pd.Series(comparison['result'].tolist())
