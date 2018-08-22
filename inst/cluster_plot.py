@@ -18,8 +18,10 @@ def main():
     parser.add_argument('-f2', '--file_2', required=True, help='second file path of the paired files')
     parser.add_argument('-r', '--clustering_result', required=True, help='file path of the clustering result')
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
+    parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
+    parser.add_argument('-y', '--y_threshold', default=0.05, type=float,  help='(adjusted) pvalue for scatter plot y axis')
+    parser.add_argument('-a', '--adj_pvalue', default=True, type=bool, help='whether to use adjusted pvalue or pvalue')
     parser.add_argument('-s', '--sig_data', default='all', help='one of \'dis\', \'con\', or \'all\'')
-    parser.add_argument('-q', '--qvalue', default=0.05, type=float,  help='adjusted pvalue threshold')
     parser.add_argument('-c', '--color', default='brg', help='cmap color for visualization')
     args = parser.parse_args()
     
@@ -31,14 +33,14 @@ def main():
     # generate sig data-only plot
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)
-    ax = plotting.scatter_plot(file_path_1, file_path_2, padj_threshold=padj_threshold, return_sig_plot=True)
+    ax = plotting.scatter_plot(file_path_1, file_path_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True)
     plt.savefig(args.out_dir + '/sig_data.png')
 
     # prepare for cluster plotting
     plt.close()
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)
-    temp = plotting.scatter_plot(file_path_1, file_path_2, padj_threshold=padj_threshold, for_cluster_plot=True)
+    temp = plotting.scatter_plot(file_path_1, file_path_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     ax = temp['plot']
     dis = temp['discordant']
     con = temp['concordant']

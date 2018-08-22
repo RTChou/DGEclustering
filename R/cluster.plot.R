@@ -1,5 +1,5 @@
 #' @export
-cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol, sigData='ALL', qvalue=0.05, color='brg'){
+cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg'){
   path <- paste(system.file(package="DGEclustering"), "cluster_plot.py", sep="/")
   system(paste(path,
                '-d', outDir,
@@ -7,7 +7,9 @@ cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol,
                '-f2', filePath2,
                '-r', clusterFilePath,
                '-g', geneCol,
+               '-x', x.threshold,
+               '-y', y.threshold,
+               '-a', adjPvalue,
                '-s', sigData,
-               '-q', qvalue,
                '-c', color))
 }
