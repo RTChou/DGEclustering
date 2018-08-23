@@ -5,33 +5,33 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   nb.dim.ex = ncol(expressions)
   nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
 
-  annotations.sep = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
-  annotations.sep <- apply(annotations.sep, 2, as.factor)
-  MCA = MCAsimple(annotations.sep)[, 1:nb.dim.an]
+  integrated.matrix = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
+  integrated.matrix <- apply(integrated.matrix, 2, as.factor)
+  MCA.res = MCAsimple(integrated.matrix)[, 1:nb.dim.an]
 
   if (clust.method != 'genclust'){
-    DIST <- dist(MCA, diag=TRUE, upper=TRUE)
+    DIST <- dist(MCA.res, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
 
   else {
-    # input for gensclust does not need to be scaled (i.e. MCA is already scaled)
-    # generate MCA input for Genclust (i.e. input is GO terms integrated)
+    # input for gensclust does not need to be scaled (i.e. MCA.res is already scaled)
+    # generate MCA.res input for Genclust (i.e. input is GO terms integrated)
     line1 <-
       data.frame(as.list(c(
-        nrow(MCA), ncol(MCA), 10, rep(NA, ncol(MCA) - 2)
+        nrow(MCA.res), ncol(MCA.res), 10, rep(NA, ncol(MCA.res) - 2)
       )))
     colnames(line1) <- seq(1, ncol(line1))
 
     line2 <- list('gene')
-    for (i in seq(1, ncol(MCA))) {
+    for (i in seq(1, ncol(MCA.res))) {
       line2[i + 1] <- paste('f', i, sep = '')
     }
     line2 <- data.frame(line2)
     colnames(line2) <- colnames(line1)
 
     gen.input <- NULL
-    gen.input <- cbind(as.data.frame(rownames(MCA)), as.data.frame(MCA))
+    gen.input <- cbind(as.data.frame(rownames(MCA.res)), as.data.frame(MCA.res))
     colnames(gen.input) <- colnames(line1)
 
     package.dir <- system.file(package="DGEclustering")
@@ -55,7 +55,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
           sep = '\n')
     if (is.null(genclust.priori) || genclust.priori=='random'){
         set.seed(123)
-        ran <- split(seq(1, nrow(MCA)), sample(1:nb.group, nrow(MCA), replace = TRUE))
+        ran <- split(seq(1, nrow(MCA.res)), sample(1:nb.group, nrow(MCA.res), replace = TRUE))
         for (i in 1:length(ran)) {
           write(paste(length(ran[[i]]), paste(ran[[i]], collapse = ' '), sep = '\t'),
                 filepath,
@@ -64,7 +64,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
         }
     }
     else {
-      DIST <- dist(MCA, diag = TRUE, upper = TRUE)
+      DIST <- dist(MCA.res, diag = TRUE, upper = TRUE)
       groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
       rownames(gen.input) <- seq(1, nrow(gen.input))
       for (i in 1:nb.group){
@@ -119,7 +119,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     names(groups) = paste('Group', 1:g, sep = '.')
   }
 
-  res <- list(groups, annotations.sep, MCA)
-  names(res) <- c('groups', 'annotations.sep', 'MCA')
+  res <- list(groups, integrated.matrix, MCA.res)
+  names(res) <- c('groups', 'integrated.matrix', 'MCA.res')
   return(res)
 }
