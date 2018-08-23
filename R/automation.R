@@ -6,8 +6,8 @@ automation <- function(rootDir, geneCol, x.threshold=0.05, y.threshold=0.05, adj
                '-g', geneCol,
                '-x', x.threshold,
                '-y', y.threshold,
-               '-a', adjPvalue,
-               '-q', qqPlot,
-               '-f', fishPlot,
-               '-s', scatterPlot))
+               '-a', python.boolean.convert(adjPvalue),
+               '-q', python.boolean.convert(qqPlot),
+               '-f', python.boolean.convert(fishPlot),
+               '-s', python.boolean.convert(scatterPlot)))
 }

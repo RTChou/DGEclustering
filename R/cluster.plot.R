@@ -9,7 +9,7 @@ cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol,
                '-g', geneCol,
                '-x', x.threshold,
                '-y', y.threshold,
-               '-a', adjPvalue,
+               '-a', python.boolean.convert(adjPvalue),
                '-s', sigData,
                '-c', color))
 }

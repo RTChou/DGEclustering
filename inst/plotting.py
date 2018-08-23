@@ -181,7 +181,7 @@ def qq_plot(output_dir, file_path=None, dataset=None):
         title = filename.replace('_', ' ')
         title = title.replace('.', ' ')
     else:
-        filename = 'Null'
+        title = 'Null'
     ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=16, y=1.02)
     ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=15)
     ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=15)
