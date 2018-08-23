@@ -99,7 +99,7 @@ def main():
         plt.close()
         fig = plt.figure(figsize=(10, 10))
         ax = fig.add_subplot(111)
-        temp = plotting.scatter_plot(file_path_1, file_path_2, padj_threshold=padj_threshold, for_cluster_plot=True)
+        temp = plotting.scatter_plot(args.file_1, args.file_2, padj_threshold=padj_threshold, for_cluster_plot=True)
         ax = temp['plot']
 
         for index, group in enumerate(group_list):
