@@ -16,7 +16,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
   else {
     # input for gensclust does not need to be scaled (i.e. MCA.res is already scaled)
-    # generate MCA.res input for Genclust (i.e. input is GO terms integrated)
+    # generate MCA.res input for Genclust (i.e. input is GO term-integrated)
     line1 <-
       data.frame(as.list(c(
         nrow(MCA.res), ncol(MCA.res), 10, rep(NA, ncol(MCA.res) - 2)
