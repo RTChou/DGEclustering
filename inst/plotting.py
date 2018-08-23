@@ -10,9 +10,9 @@ from scipy.stats import beta
 
 def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False):
     # check file names
-    if re.search(r".+\/(.+).tsv", file_path_1) == False:
+    if re.search(r".+\/(.+).tsv", file_path_1) == None:
         file_path_1 = './' + file_path_1
-    if re.search(r".+\/(.+).tsv", file_path_2) == False:
+    if re.search(r".+\/(.+).tsv", file_path_2) == None:
         file_path_2 = './' + file_path_2
  
     plt.close()
@@ -104,9 +104,9 @@ def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', 
 
 def fish_plot(file_path_1, file_path_2, output_dir):
     # check file names
-    if re.search(r".+\/(.+).tsv", file_path_1) == False:
+    if re.search(r".+\/(.+).tsv", file_path_1) == None:
         file_path_1 = './' + file_path_1
-    if re.search(r".+\/(.+).tsv", file_path_2) == False:
+    if re.search(r".+\/(.+).tsv", file_path_2) == None:
         file_path_2 = './' + file_path_2
       
     plt.close()  
@@ -175,7 +175,7 @@ def qq_plot(output_dir, file_path=None, dataset=None):
 
     if file_path is not None:
         # check file names
-        if re.search(r".+\/(.+).tsv", file_path) == False:
+        if re.search(r".+\/(.+).tsv", file_path) == None:
             file_path = './' + file_path
         filename = re.search(r".+\/(.+).tsv", file_path).group(1)
         title = filename.replace('_', ' ')
