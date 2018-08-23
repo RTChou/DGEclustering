@@ -2,9 +2,9 @@
 cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg'){
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
-      return('True')
+      return('1')
     else
-      return('False')
+      return('0')
   }
   path <- paste(system.file(package="DGEclustering"), "cluster_plot.py", sep="/")
   system(paste(path,
