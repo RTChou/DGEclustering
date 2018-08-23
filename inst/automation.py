@@ -16,11 +16,11 @@ def main():
     parser.add_argument('-d', '--root_dir', required=True, help='starting directory')
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
-    parser.add_argument('-y', '--y_threshold', default=0.05, type=float,  help='(adjusted) pvalue for scatter plot y axis')
-    parser.add_argument('-a', '--adj_pvalue', default=True, type=bool, help='whether to use adjusted pvalue or pvalue')
-    parser.add_argument('-q', '--qq_plot', default=True, type=bool,  help='generate Q-Q plots')
-    parser.add_argument('-f', '--fish_plot', default=True, type=bool,  help='generate fish plots')
-    parser.add_argument('-s', '--scatter_plot', default=True, type=bool,  help='generate scatter plots')
+    parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
+    parser.add_argument('-a', '--adj_pvalue', type=bool, action='store_true', help='whether to use adjusted pvalue or pvalue')
+    parser.add_argument('-q', '--qq_plot', type=bool, action='store_true', help='generate Q-Q plots')
+    parser.add_argument('-f', '--fish_plot', type=bool, action='store_true', help='generate fish plots')
+    parser.add_argument('-s', '--scatter_plot', type=bool, action='store_true', help='generate scatter plots')
     args = parser.parse_args()
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
