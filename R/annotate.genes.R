@@ -21,7 +21,7 @@ annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=
     GO.term <- GO.res[row, 'GO']
     if (!GO.term %in% colnames(dataset))
       dataset[GO.term] <- 0
-    dataset[dataset[paste(colname, 'x', sep='_')]==GO.res[row, 'SYMBOL'], GO.term] <- 1
+    dataset[dataset[paste(geneCol, 'x', sep='_')]==GO.res[row, 'SYMBOL'], GO.term] <- 1
   }
   return(dataset)
 }

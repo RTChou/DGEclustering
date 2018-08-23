@@ -25,14 +25,14 @@ def main():
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
     if args.qq_plot == True:
-        os.system('mkdir -p ' + args.root_dir + 'qq_plot')
-        os.system('rm -f ' + args.root_dir + 'qq_plot/*')
+        os.system('mkdir -p ' + args.root_dir + 'qq_plots')
+        os.system('rm -f ' + args.root_dir + 'qq_plots/*')
     if args.fish_plot == True:
-        os.system('mkdir -p ' + args.root_dir + 'fish_plot')
-        os.system('rm -f ' + args.root_dir + 'fish_plot/*')
+        os.system('mkdir -p ' + args.root_dir + 'fish_plots')
+        os.system('rm -f ' + args.root_dir + 'fish_plots/*')
     if args.scatter_plot == True:
-        os.system('mkdir -p ' + args.root_dir + 'scatter_plot ' + args.root_dir + 'sig_genes')
-        os.system('rm -f ' + args.root_dir + 'scatter_plot/* ' + args.root_dir + 'sig_genes/*')
+        os.system('mkdir -p ' + args.root_dir + 'scatter_plots ' + args.root_dir + 'paired_files')
+        os.system('rm -f ' + args.root_dir + 'scatter_plots/* ' + args.root_dir + 'paired_files/*')
 
     # recursively search for candidate tsv and Rmd files
     os.system('find ' + args.root_dir + ' -name "rnaseq*.Rmd" > rmd_filepaths')
@@ -135,12 +135,12 @@ def main():
 
         # emit plots and diagnostics
         if args.qq_plot == True:
-            plotting.qq_plot(output_dir=args.root_dir+'qq_plot', file_path=paired_file['file_1'])
-            plotting.qq_plot(output_dir=args.root_dir+'qq_plot', file_path=paired_file['file_2'])
+            plotting.qq_plot(output_dir=args.root_dir+'qq_plots', file_path=paired_file['file_1'])
+            plotting.qq_plot(output_dir=args.root_dir+'qq_plots', file_path=paired_file['file_2'])
         if args.fish_plot == True:
-            plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'fish_plot')
+            plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'fish_plots')
         if args.scatter_plot == True:
-            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'scatter_plot', dat_out_dir=args.root_dir+'sig_genes', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
+            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'scatter_plots', dat_out_dir=args.root_dir+'paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
             if temp['discordant_path'] is not None:            
                 c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
             if temp['concordant_path'] is not None:
@@ -153,7 +153,7 @@ def main():
     if args.qq_plot == True:
         random.seed(123)
         dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
-        plotting.qq_plot(output_dir=args.root_dir+'qq_plot', dataset=dataset)
+        plotting.qq_plot(output_dir=args.root_dir+'qq_plots', dataset=dataset)
 
 if __name__ == '__main__':
     main()
