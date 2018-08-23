@@ -34,7 +34,7 @@ def main():
         file_path_2 = './' + file_path_2
     
     # generate sig data-only plot
-    fig = plt.figure(figsize=(10, 10)
+    fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)
     ax = plotting.scatter_plot(args.file_1, args.file_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True)
     plt.savefig(args.out_dir + '/sig_data.png')
