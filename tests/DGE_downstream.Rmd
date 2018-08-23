@@ -9,30 +9,18 @@ output: html_document
 knitr::opts_chunk$set(echo=TRUE)
 ```
 
-### Note 1: installing DGEclustering package
+#### Note 1: installing DGEclustering package
 ```{r}
 setwd('~/Downloads')
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
 
 
-## Import libraries and set working directory
+## 1. Import libraries and AnnotationHub
 ```{r}
 library(DGEclustering)
 library(AnnotationHub)
 library(RSQLite)
-setwd('~/Downloads/dictyostelium_2/test')
-```
-
-
-## Automation
-```{r}
-automation(rootDir='./', geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
-```
-
-
-## Download organism database
-```{r}
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
 
@@ -42,94 +30,102 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 
         httr::use_proxy(Sys.getenv("http_proxy")),
         FALSE)
+```
 
+## 2. Set the working directory, and specify the column name for gene IDs, 
+organism database, and key type
+```{r}
+setwd('~/Downloads/dictyostelium_2/test')
+gene.col <- 'GENEID'
 org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
 key.type <- 'SYMBOL'
 ```
 
 
-## Search for files in database
+## 3. Automation of diagnostic plots
 ```{r}
-mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
-dbListTables(mydb)
+automation(rootDir='./', geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
 ```
 
 
-## Close and disconnect the database
+## (Opt.) Search for files in database
+```{r}
+mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
+dbListTables(mydb)
+
+# many other SQLite functions...
+```
+
+
+## (Opt.) Remember to close and disconnect the database
 ```{r}
 dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
 
 
-## Import paired dataset(s)
+## 4. Specify the paths of input files
 ```{r}
-dir <- 'paired_files' 
 dis.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_disagreeing_genes.tsv'
 con.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_agreeing_genes.tsv'
+all.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv' # file that contains all genes
+cluster.out <- 'intego_result_3.tsv'
+x.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv'
+y.file <- 'control.GDT.t5h.vs.control.GDT.t0.tsv'
+plotting.out <- './rapamycin_control_3'
+system(paste('mkdir', plotting.out)) # to make new plotting directory
+```
 
+
+## 5. Annotate Genes
+```{r}
+dir <- 'paired_files' 
 dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, sep='\t')
 con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, sep='\t')
 paired.dat <- rbind(dis.dat, con.dat)
-```
-
-
-## Import all genes
-```{r}
-gene.col <- 'GENEID'
-all <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv'
 bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
-```
 
-
-## Annotate Genes
-```{r}
 dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
 
-## Prepare expression and annotation datasets for clustering
-expressions: choose the desired dimensions 
-annotations: choose the number of GO terms for optimal clustering
-number of group: choose the number of group for optimal clustering
+## 6. Prepare expression and annotation datasets for clustering
+expressions: choose the desired dimensions <br> 
+annotations: choose the number of GO terms for optimal clustering <br> 
+number of group: choose the number of group for optimal clustering <br> 
 
 ```{r}
+# expressions
 exp <- scale(dat[, c(2, 6, 8, 12)])
 rownames(exp) <- dat[, paste(gene.col, 'x', sep='_')]
 
+#annotaitons
 ann <- dat[, c(14:ncol(dat)), drop=FALSE]
 sum(apply(ann, 2, sum) >= 3)
 ann <- ann[, apply(ann, 2, sum) >= 3]
 rownames(ann) <- dat[, paste(gene.col, 'x', sep='_')]
 
+# number of groups
 nb.group=8
 ```
 
 
-## Cluster genes and export the result
+## 7. Cluster genes, export the result, and visualize the clustering result
 ```{r}
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
 
-out.path <- 'intego_result_3.tsv'
-write.table(stack(res$groups), out.path, sep='\t', row.names=FALSE)
+# res$groups # code to view the clustering result
+write.table(stack(res$groups), cluster.out, sep='\t', row.names=FALSE)
+
+# visualize the clustering result
+cluster.plot(outDir=plotting.out, filePath1=x.file, filePath2=y.file, clusterFilePath=cluster.out, geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
 ```
 
 
-## Visualize the clustering result
+## 8. GO enrichment of the clustering result (plotting)
 ```{r}
-file1 <- 'rapamycin.GDT.t2h.vs.control.GDT.t2h.tsv'
-file2 <- 'control.GDT.t2h.vs.control.GDT.t0.tsv'
-cluster.filepath <- 'intego_result_2.tsv'
-out.dir <- './rapamycin_control_2'
-system(paste('mkdir', out.dir))
+bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
 
-cluster.plot(outDir=out.dir, filePath1=file1, filePath2=file2, clusterFilePath=cluster.filepath, geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
-```
-
-
-## GO enrichment of the clustering result (plotting)
-```{r}
-bg.genes <- 'filepath'['GENEID']
 cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='BP', top=10)
 ```
 
