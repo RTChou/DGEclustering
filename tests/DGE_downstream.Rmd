@@ -9,6 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo=TRUE)
 ```
 
+### Note 1: installing DGEclustering package
+```{r}
+setwd('~/Downloads')
+install.packages('DGEclustering', type='source', repos=NULL)
+```
+
+
 ## Import libraries and set working directory
 ```{r}
 library(DGEclustering)
@@ -17,10 +24,12 @@ library(RSQLite)
 setwd('~/Downloads/dictyostelium_2/test')
 ```
 
+
 ## Automation
 ```{r}
 automation(rootDir='./', geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
 ```
+
 
 ## Download organism database
 ```{r}
@@ -38,11 +47,13 @@ org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
 key.type <- 'SYMBOL'
 ```
 
+
 ## Search for files in database
 ```{r}
 mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
 dbListTables(mydb)
 ```
+
 
 ## Close and disconnect the database
 ```{r}
@@ -50,27 +61,32 @@ dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
 
+
 ## Import paired dataset(s)
 ```{r}
-dis<- 'paired_files/rapamycin.GDT.t30.vs.control.GDT.t30_vs_control.GDT.t30.vs.control.GDT.t0_disagreeing_genes.tsv'
-con <- 'paired_files/rapamycin.GDT.t30.vs.control.GDT.t30_vs_control.GDT.t30.vs.control.GDT.t0_agreeing_genes.tsv'
+dir <- 'paired_files' 
+dis.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_disagreeing_genes.tsv'
+con.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_agreeing_genes.tsv'
 
-dis.dat <- read.table(dis, header=TRUE, sep='\t')
-con.dat <- read.table(con, header=TRUE, sep='\t')
+dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, sep='\t')
+con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, sep='\t')
 paired.dat <- rbind(dis.dat, con.dat)
 ```
+
 
 ## Import all genes
 ```{r}
 gene.col <- 'GENEID'
-all <- 'rapamycin.GDT.t30.vs.control.GDT.t30.tsv'
+all <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv'
 bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
 ```
+
 
 ## Annotate Genes
 ```{r}
 dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
+
 
 ## Prepare expression and annotation datasets for clustering
 expressions: choose the desired dimensions 
@@ -82,30 +98,34 @@ exp <- scale(dat[, c(2, 6, 8, 12)])
 rownames(exp) <- dat[, paste(gene.col, 'x', sep='_')]
 
 ann <- dat[, c(14:ncol(dat)), drop=FALSE]
-sum(apply(ann, 2, sum) >= 2)
-ann <- ann[, apply(ann, 2, sum) >= 2]
+sum(apply(ann, 2, sum) >= 3)
+ann <- ann[, apply(ann, 2, sum) >= 3]
 rownames(ann) <- dat[, paste(gene.col, 'x', sep='_')]
 
 nb.group=8
 ```
 
+
 ## Cluster genes and export the result
 ```{r}
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
 
-out.path <- 'intego_result.tsv'
+out.path <- 'intego_result_3.tsv'
 write.table(stack(res$groups), out.path, sep='\t', row.names=FALSE)
 ```
 
+
 ## Visualize the clustering result
 ```{r}
-file1 <- 'rapamycin.GDT.t30.vs.control.GDT.t30.tsv'
-file2 <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
-cluster.filepath <- 'intego_result.tsv'
-out.dir <- './rapamycin_control_1'
+file1 <- 'rapamycin.GDT.t2h.vs.control.GDT.t2h.tsv'
+file2 <- 'control.GDT.t2h.vs.control.GDT.t0.tsv'
+cluster.filepath <- 'intego_result_2.tsv'
+out.dir <- './rapamycin_control_2'
+system(paste('mkdir', out.dir))
 
 cluster.plot(outDir=out.dir, filePath1=file1, filePath2=file2, clusterFilePath=cluster.filepath, geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
 ```
+
 
 ## GO enrichment of the clustering result (plotting)
 ```{r}
