@@ -27,12 +27,6 @@ def main():
     
     warnings.filterwarnings('ignore') # ignore runtime warnings
     
-    # check file names
-    if re.search(r".+\/(.+).tsv", file_path_1) == False:
-        file_path_1 = './' + file_path_1
-    if re.search(r".+\/(.+).tsv", file_path_2) == False:
-        file_path_2 = './' + file_path_2
-    
     # generate sig data-only plot
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)

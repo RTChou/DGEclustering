@@ -9,7 +9,12 @@ from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
 def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False):
-    
+    # check file names
+    if re.search(r".+\/(.+).tsv", file_path_1) == False:
+        file_path_1 = './' + file_path_1
+    if re.search(r".+\/(.+).tsv", file_path_2) == False:
+        file_path_2 = './' + file_path_2
+ 
     plt.close()
     dataset = pd.read_table(file_path_1)
     dataset_2 = pd.read_table(file_path_2)
@@ -98,7 +103,12 @@ def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', 
 
 
 def fish_plot(file_path_1, file_path_2, output_dir):
-  
+    # check file names
+    if re.search(r".+\/(.+).tsv", file_path_1) == False:
+        file_path_1 = './' + file_path_1
+    if re.search(r".+\/(.+).tsv", file_path_2) == False:
+        file_path_2 = './' + file_path_2
+      
     plt.close()  
     dataset = pd.read_table(file_path_1)
     dataset_2 = pd.read_table(file_path_2)
@@ -164,10 +174,15 @@ def qq_plot(output_dir, file_path=None, dataset=None):
     ax.scatter(exp, obs, s=3, c=(31 / 255., 119 / 255., 180 / 255.))
 
     if file_path is not None:
-        filename = re.search(r".+\/(.+).tsv", file_path).group(1).replace('_', ' ')
+        # check file names
+    if re.search(r".+\/(.+).tsv", file_path) == False:
+        file_path = './' + file_path
+        filename = re.search(r".+\/(.+).tsv", file_path).group(1)
+        title = filename.replace('_', ' ')
+        title = title.replace('.', ' ')
     else:
         filename = 'Null'
-    ax.set_title(filename + ' QQ-Plot', fontweight='bold', fontsize=16, y=1.02)
+    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=16, y=1.02)
     ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=15)
     ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=15)
     #ax.axvline(x=0, linestyle='dotted', color='grey')
