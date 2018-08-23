@@ -17,20 +17,20 @@ def main():
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
-    parser.add_argument('-a', '--adj_pvalue', action='store_true', help='whether to use adjusted pvalue or pvalue')
-    parser.add_argument('-q', '--qq_plot', action='store_true', help='generate Q-Q plots')
-    parser.add_argument('-f', '--fish_plot', action='store_true', help='generate fish plots')
-    parser.add_argument('-s', '--scatter_plot', action='store_true', help='generate scatter plots')
+    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue, 1 as True, 0 as False')
+    parser.add_argument('-q', '--qq_plot', default=1, type=int, help='generate Q-Q plots, 1 as True, 0 as False')
+    parser.add_argument('-f', '--fish_plot', default=1, type=int, help='generate fish plots, 1 as True, 0 as False')
+    parser.add_argument('-s', '--scatter_plot', default=1, type=int, help='generate scatter plots, 1 as True, 0 as False')
     args = parser.parse_args()
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
-    if args.qq_plot == True:
+    if args.qq_plot == 1:
         os.system('mkdir -p ' + args.root_dir + '/qq_plots')
         os.system('rm -f ' + args.root_dir + '/qq_plots/*')
-    if args.fish_plot == True:
+    if args.fish_plot == 1:
         os.system('mkdir -p ' + args.root_dir + '/fish_plots')
         os.system('rm -f ' + args.root_dir + '/fish_plots/*')
-    if args.scatter_plot == True:
+    if args.scatter_plot == 1:
         os.system('mkdir -p ' + args.root_dir + '/scatter_plots ' + args.root_dir + '/paired_files')
         os.system('rm -f ' + args.root_dir + '/scatter_plots/* ' + args.root_dir + '/paired_files/*')
 
@@ -134,12 +134,12 @@ def main():
         """
 
         # emit plots and diagnostics
-        if args.qq_plot == True:
+        if args.qq_plot == 1:
             plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', file_path=paired_file['file_1'])
             plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', file_path=paired_file['file_2'])
-        if args.fish_plot == True:
+        if args.fish_plot == 1:
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plots')
-        if args.scatter_plot == True:
+        if args.scatter_plot == 1:
             temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
             if temp['discordant_path'] is not None:            
                 c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
@@ -150,7 +150,7 @@ def main():
     conn.close()
 
     # generate null Q-Q plot
-    if args.qq_plot == True:
+    if args.qq_plot == 1:
         random.seed(123)
         dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
         plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', dataset=dataset)

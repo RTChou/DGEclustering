@@ -20,7 +20,7 @@ def main():
     parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
-    parser.add_argument('-a', '--adj_pvalue', action='store_true', help='whether to use adjusted pvalue or pvalue')
+    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue, 1 as True, 0 as False')
     parser.add_argument('-s', '--sig_data', default='all', help='one of \'dis\', \'con\', or \'all\'')
     parser.add_argument('-c', '--color', default='brg', help='cmap color for visualization')
     args = parser.parse_args()
