@@ -21,6 +21,7 @@ install.packages('DGEclustering', type='source', repos=NULL)
 library(DGEclustering)
 library(AnnotationHub)
 library(RSQLite)
+library(stringr)
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
 
@@ -41,10 +42,18 @@ org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
 key.type <- 'SYMBOL'
 ```
 
-
-## 3. Automation of diagnostic plots
+## 3. Set the (adjusted) p-value thresholds
 ```{r}
-automation(rootDir='./', geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
+x.threshold <- 0.01
+y.threshold <- 0.01
+adjPvalue <- TRUE
+```
+
+
+## 4. Automation of diagnostic plots
+```{r}
+# generate scatter plots and corresponding files for significant genes
+automation(rootDir='./', geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
 ```
 
 
@@ -64,32 +73,32 @@ unlink('rnaseq.db')
 ```
 
 
-## 4. Specify the paths of input files
+## 5. Specify the paths of input files
 ```{r}
-dis.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_disagreeing_genes.tsv'
-con.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h_vs_control.GDT.t5h.vs.control.GDT.t0_agreeing_genes.tsv'
-all.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv' # file that contains all genes
-cluster.out <- 'intego_result_3.tsv'
-x.file <- 'rapamycin.GDT.t5h.vs.control.GDT.t5h.tsv'
-y.file <- 'control.GDT.t5h.vs.control.GDT.t0.tsv'
-plotting.out <- './rapamycin_control_3'
+# the order of x.file and y.file matters
+x.file <- 'control.GDT.t2h.vs.control.GDT.t30.tsv'
+y.file <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
+cluster.out <- 'intego_result_time_series_1.tsv'
+plotting.out <- './qvalue_0.01_1'
 system(paste('mkdir', plotting.out)) # to make new plotting directory
 ```
 
 
-## 5. Annotate Genes
+## 6. Annotate Genes
 ```{r}
 dir <- 'paired_files' 
+dis.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'disagreeing_genes.tsv', sep='_')
+con.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'agreeing_genes.tsv', sep='_')
 dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, sep='\t')
 con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, sep='\t')
 paired.dat <- rbind(dis.dat, con.dat)
-bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
+bg.genes <- read.table(x.file, header=TRUE, sep='\t')[gene.col]
 
 dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
 
-## 6. Prepare expression and annotation datasets for clustering
+## 7. Prepare expression and annotation datasets for clustering
 expressions: choose the desired dimensions <br> 
 annotations: choose the number of GO terms for optimal clustering <br> 
 number of group: choose the number of group for optimal clustering <br> 
@@ -110,7 +119,7 @@ nb.group=8
 ```
 
 
-## 7. Cluster genes, export the result, and visualize the clustering result
+## 8. Cluster genes, export the result, and visualize the clustering result
 ```{r}
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
 
@@ -118,13 +127,13 @@ res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.gro
 write.table(stack(res$groups), cluster.out, sep='\t', row.names=FALSE)
 
 # visualize the clustering result
-cluster.plot(outDir=plotting.out, filePath1=x.file, filePath2=y.file, clusterFilePath=cluster.out, geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
+cluster.plot(outDir=plotting.out, filePath1=x.file, filePath2=y.file, clusterFilePath=cluster.out, geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, sigData='ALL', color='brg')
 ```
 
 
-## 8. GO enrichment of the clustering result (plotting)
+## 9. GO enrichment of the clustering result (plotting)
 ```{r}
-bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
+bg.genes <- read.table(x.file, header=TRUE, sep='\t')[gene.col]
 
 cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='BP', top=10)
 ```
