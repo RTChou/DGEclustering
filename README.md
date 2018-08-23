@@ -1,2 +1,4 @@
-# DGEclustering
-<img src="../assets/logo.png" height="150" align="right" />
+DGEclustering
+=============
+
+<img src="../assets/logo.png" height="200" align="left" />
