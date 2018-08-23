@@ -2,10 +2,15 @@
 #' @import clusterProfiler
 #' @import ggplot2
 cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top=10){
+  # GO enrichment
   universe <- sapply(BgGenes, as.character)
   GO.cluster.res <- as.data.frame(compareCluster(clusterGroups, fun='enrichGO', OrgDb=org.db, keyType=keyType, ont=ont, universe=universe))
 
   # select top significant terms
+  gene.numbers <- c()
+  for (n in 1:length(clusterGroups)) {
+    gene.numbers <- c(gene.numbers, paste('(', length(clusterGroups[[n]]), ')', sep=''))
+  }
   temp <- split(GO.cluster.res, GO.cluster.res$Cluster)
   temp2 <- data.frame(matrix(ncol=ncol(GO.cluster.res), nrow=0))
   colnames(temp2) <- colnames(GO.cluster.res)
@@ -18,9 +23,7 @@ cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top
     if (nrow(cluster) > top){
       cluster <- cluster[1:top,]
     }
-
     cluster['Cluster'] <- lapply(cluster['Cluster'], function(x) paste(x, gene.numbers[n]))
-
     temp2 <- rbind(temp2, cluster)
   }
   GO.cluster.res <- temp2[order(temp2[, 'Cluster']),]
