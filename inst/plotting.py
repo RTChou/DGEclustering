@@ -175,8 +175,8 @@ def qq_plot(output_dir, file_path=None, dataset=None):
 
     if file_path is not None:
         # check file names
-    if re.search(r".+\/(.+).tsv", file_path) == False:
-        file_path = './' + file_path
+        if re.search(r".+\/(.+).tsv", file_path) == False:
+            file_path = './' + file_path
         filename = re.search(r".+\/(.+).tsv", file_path).group(1)
         title = filename.replace('_', ' ')
         title = title.replace('.', ' ')
