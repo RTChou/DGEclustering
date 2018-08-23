@@ -9,17 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo=TRUE)
 ```
 
+## Import libraries and set working directory
 ```{r}
 library(DGEclustering)
+library(AnnotationHub)
+library(RSQLite)
 setwd('~/Downloads/dictyostelium_2/test')
 ```
 
-# Automation
+## Automation
 ```{r}
 automation(rootDir='./', geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
 ```
 
-# Download organism database
+## Download organism database
 ```{r}
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
@@ -30,47 +33,83 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 
         httr::use_proxy(Sys.getenv("http_proxy")),
         FALSE)
+
 org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
 key.type <- 'SYMBOL'
 ```
 
-# Gene annotation
+## Search for files in database
 ```{r}
-paired.dat <- 'filepath'
-bg.genes <- 'filepath'['GENEID']
-dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol='GENEID', GOEnrichment=FALSE, BgGenes=bg.genes)
+mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
+dbListTables(mydb)
 ```
 
-# Prepare input datasets for clustering
+## Close and disconnect the database
 ```{r}
-expressions <- scale(dat[, c(2, 6, 8, 12)])
-rownames(expressions) <- dat[,'GENEID_x']
-
-annotations <- dat[, c(14:ncol(dat)), drop=FALSE]
-sum(apply(annotations, 2, sum) >= 20)
-annotations <- annotations[, apply(annotations, 2, sum) >= 20]
-rownames(annotations) <- dat[,'GENEID_x']
+dbDisconnect(mydb)
+unlink('rnaseq.db')
 ```
 
-# Gene clustering
+## Import paired dataset(s)
 ```{r}
-res <- DGE.clust(expressions, annotations, clust.method='intego', nb.group=8)
-write.table(stack(res$groups), 'intego_result.tsv', sep='\t', row.names=FALSE)
+dis<- 'paired_files/rapamycin.GDT.t30.vs.control.GDT.t30_vs_control.GDT.t30.vs.control.GDT.t0_disagreeing_genes.tsv'
+con <- 'paired_files/rapamycin.GDT.t30.vs.control.GDT.t30_vs_control.GDT.t30.vs.control.GDT.t0_agreeing_genes.tsv'
+
+dis.dat <- read.table(dis, header=TRUE, sep='\t')
+con.dat <- read.table(con, header=TRUE, sep='\t')
+paired.dat <- rbind(dis.dat, con.dat)
 ```
 
-# Cluster visualization
+## Import all genes
 ```{r}
-filepath1 <- 'filepath1'
-filepath2 <- 'filepath2'
+gene.col <- 'GENEID'
+all <- 'rapamycin.GDT.t30.vs.control.GDT.t30.tsv'
+bg.genes <- read.table(all, header=TRUE, sep='\t')[gene.col]
+```
+
+## Annotate Genes
+```{r}
+dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
+```
+
+## Prepare expression and annotation datasets for clustering
+expressions: choose the desired dimensions 
+annotations: choose the number of GO terms for optimal clustering
+number of group: choose the number of group for optimal clustering
+
+```{r}
+exp <- scale(dat[, c(2, 6, 8, 12)])
+rownames(exp) <- dat[, paste(gene.col, 'x', sep='_')]
+
+ann <- dat[, c(14:ncol(dat)), drop=FALSE]
+sum(apply(ann, 2, sum) >= 2)
+ann <- ann[, apply(ann, 2, sum) >= 2]
+rownames(ann) <- dat[, paste(gene.col, 'x', sep='_')]
+
+nb.group=8
+```
+
+## Cluster genes and export the result
+```{r}
+res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
+
+out.path <- 'intego_result.tsv'
+write.table(stack(res$groups), out.path, sep='\t', row.names=FALSE)
+```
+
+## Visualize the clustering result
+```{r}
+file1 <- 'rapamycin.GDT.t30.vs.control.GDT.t30.tsv'
+file2 <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
 cluster.filepath <- 'intego_result.tsv'
-cluster.plot(outDir='./', filepath1=filepath1, filepath2=filepath2, clusterFilePath=cluster.filepath, geneCol='GENEID', x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
+out.dir <- './rapamycin_control_1'
+
+cluster.plot(outDir=out.dir, filePath1=file1, filePath2=file2, clusterFilePath=cluster.filepath, geneCol=gene.col, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg')
 ```
 
-# Cluster GO enrichment (plotting)
+## GO enrichment of the clustering result (plotting)
 ```{r}
 bg.genes <- 'filepath'['GENEID']
 cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='BP', top=10)
 ```
-
-
 
