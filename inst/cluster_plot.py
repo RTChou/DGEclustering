@@ -26,21 +26,18 @@ def main():
     args = parser.parse_args()
     
     warnings.filterwarnings('ignore') # ignore runtime warnings
-    file_path_1 = args.file_1
-    file_path_2 = args.file_2
-    padj_threshold = args.qvalue
 
     # generate sig data-only plot
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)
-    ax = plotting.scatter_plot(file_path_1, file_path_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True)
+    ax = plotting.scatter_plot(args.file_1, args.file_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True)
     plt.savefig(args.out_dir + '/sig_data.png')
 
     # prepare for cluster plotting
     plt.close()
     fig = plt.figure(figsize=(10, 10))
     ax = fig.add_subplot(111)
-    temp = plotting.scatter_plot(file_path_1, file_path_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+    temp = plotting.scatter_plot(args.file_1, args.file_2, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     ax = temp['plot']
     dis = temp['discordant']
     con = temp['concordant']
