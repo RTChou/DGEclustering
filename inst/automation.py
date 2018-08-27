@@ -111,7 +111,7 @@ def main():
             dataset_2 = pd.read_table(filepath_2, sep='\t')
             if dataset.shape[0] == dataset_2.shape[0] and dataset.shape[1] == dataset_2.shape[1]:
                 comparison = pd.DataFrame(columns=['result'])
-                comparison['result'] = np.where(dataset[[column_name]] == dataset_2[[column_name]], True, False)
+                comparison['result'] = np.where(dataset.loc[:,column_name] == dataset_2.loc[:,column_name], True, False)
                 c_series = pd.Series(comparison['result'].tolist())
                 if not 'False' in c_series:    
                     paired_files.append({'file_1': filepath, 'file_2': filepath_2})
