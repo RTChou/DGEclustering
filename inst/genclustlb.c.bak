@@ -451,7 +451,7 @@ ubyte *genclust(uint nr, uint nfeat, uint nstepmax, uint nparti, double *vl, dou
  pc = pcc;
  pm = pmm;
  outc = NULL;
- // // srand((uint) time (NULL));
+ // srand((uint) time (NULL));
  //npart is the number of classes
  if ((nparti<=0)||(nparti>255))
   printf("Error: Wrong number of cluster (ncluster) value (0 < ncluster < 255)\n");
