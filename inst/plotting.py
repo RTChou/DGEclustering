@@ -8,44 +8,65 @@ from matplotlib.offsetbox import AnchoredText
 from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
-def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False):
+def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False):
     # check file names
-    if re.search(r".+\/(.+).tsv", file_path_1) == None:
-        file_path_1 = './' + file_path_1
-    if re.search(r".+\/(.+).tsv", file_path_2) == None:
-        file_path_2 = './' + file_path_2
+    for index, file_path in enumerate(file_paths):
+        if re.search(r".+\/(.+).tsv", file_path) == None:
+            file_paths[index] = './' + file_path
  
     plt.close()
-    dataset = pd.read_table(file_path_1)
-    dataset_2 = pd.read_table(file_path_2)
-    merged_set = dataset.merge(dataset_2, left_on=dataset.columns[0], right_on=dataset_2.columns[0])
+
+    datasets = list()
+    for file_path in file_paths:
+        datasets.append(pd.read_table(file_path))
+    keys = np.arange(len(datasets)).astype(str)
+    merged_set = pd.concat([x.set_index(gene_col) for x in datasets], axis=1, keys=keys)
+    merged_set.columns = merged_set.columns.map('_'.join)
     
     if adj_pvalue == True:
-        sig_vs_sig = merged_set[(merged_set['padj_x'] < x_threshold) & (merged_set['padj_y'] < y_threshold)]
-        sig_vs_NS = merged_set[(merged_set['padj_x'] < x_threshold) & (merged_set['padj_y'] >= y_threshold)]
-        NS_vs_sig = merged_set[(merged_set['padj_x'] >= x_threshold) & (merged_set['padj_y'] < y_threshold)]
-        NS_vs_NS = merged_set[(merged_set['padj_x'] >= x_threshold) & (merged_set['padj_y'] >= y_threshold)]
-        non_NA_set = merged_set[(merged_set.isna()['padj_x'] == False) & (merged_set.isna()['padj_y'] == False)]
+        padj_x = str(x_file_number) + '_padj'
+        padj_y = str(y_file_number) + '_padj'
+        sig_vs_sig = merged_set[(merged_set[padj_x] < x_threshold) & (merged_set[padj_y] < y_threshold)]
+        sig_vs_NS = merged_set[(merged_set[padj_x] < x_threshold) & (merged_set[padj_y] >= y_threshold)]
+        NS_vs_sig = merged_set[(merged_set[padj_x] >= x_threshold) & (merged_set[padj_y] < y_threshold)]
+        NS_vs_NS = merged_set[(merged_set[padj_x] >= x_threshold) & (merged_set[padj_y] >= y_threshold)]
+        non_NA_set = merged_set[(merged_set.isna()[padj_x] == False) & (merged_set.isna()[padj_y] == False)]
     
     else:
-        sig_vs_sig = merged_set[(merged_set['pvalue_x'] < x_threshold) & (merged_set['pvalue_y'] < y_threshold)]
-        sig_vs_NS = merged_set[(merged_set['pvalue_x'] < x_threshold) & (merged_set['pvalue_y'] >= y_threshold)]
-        NS_vs_sig = merged_set[(merged_set['pvalue_x'] >= x_threshold) & (merged_set['pvalue_y'] < y_threshold)]
-        NS_vs_NS = merged_set[(merged_set['pvalue_x'] >= x_threshold) & (merged_set['pvalue_y'] >= y_threshold)]
-        non_NA_set = merged_set[(merged_set.isna()['pvalue_x'] == False) & (merged_set.isna()['pvalue_y'] == False)]  
+        pvalue_x = str(x_file_number) + '_pvalue'
+        pvalue_y = str(y_file_number) + '_pvalue'
+        sig_vs_sig = merged_set[(merged_set[pvalue_x] < x_threshold) & (merged_set[pvalue_y] < y_threshold)]
+        sig_vs_NS = merged_set[(merged_set[pvalue_x] < x_threshold) & (merged_set[pvalue_y] >= y_threshold)]
+        NS_vs_sig = merged_set[(merged_set[pvalue_x] >= x_threshold) & (merged_set[pvalue_y] < y_threshold)]
+        NS_vs_NS = merged_set[(merged_set[pvalue_x] >= x_threshold) & (merged_set[pvalue_y] >= y_threshold)]
+        non_NA_set = merged_set[(merged_set.isna()[pvalue_x] == False) & (merged_set.isna()[pvalue_y] == False)]  
 
-    sig_discordant = sig_vs_sig[((sig_vs_sig['log2FoldChange_x'] < 0) & (sig_vs_sig['log2FoldChange_y'] > 0)) | 
-             ((sig_vs_sig['log2FoldChange_x'] > 0) & (sig_vs_sig['log2FoldChange_y'] < 0))]    
-    sig_concordant = sig_vs_sig[((sig_vs_sig['log2FoldChange_x'] >= 0) & (sig_vs_sig['log2FoldChange_y'] >=0)) |
-             ((sig_vs_sig['log2FoldChange_x'] <= 0) & (sig_vs_sig['log2FoldChange_y'] <= 0))]
+    log2FoldChange_x = str(x_file_number) + '_log2FoldChange'
+    log2FoldChange_y = str(y_file_number) + '_log2FoldChange'
+    
+    # prepare for output dataset(s)
+    sig_discordant = None
+    sig_concordant = None
+    all_sig = None
+    if len(datasets == 2):
+        sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) | 
+                 ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]    
+        sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) |
+                 ((sig_vs_sig[log2FoldChange_x] <= 0) & (sig_vs_sig[log2FoldChange_y] <= 0))]
+    else: # the significant threshold will be x_threshold
+        if adj_pvalue == True:
+            temp = pd.concat((sig_vs_sig['%i_padj'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
+        else:        
+            temp = pd.concat((sig_vs_sig['%i_pvalue'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
+        all_sig = sig_vs_sig[temp]
 
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if for_cluster_plot == False and return_sig_plot == False:
-        g4 = ax.scatter(NS_vs_NS['log2FoldChange_x'], NS_vs_NS['log2FoldChange_y'], s=9, c='grey', alpha=0.3)
-        g3 = ax.scatter(NS_vs_sig['log2FoldChange_x'], NS_vs_sig['log2FoldChange_y'], s=9, c=(31 / 255., 119 / 255., 180 / 255.), alpha=0.6)
-        g2 = ax.scatter(sig_vs_NS['log2FoldChange_x'], sig_vs_NS['log2FoldChange_y'], s=9, c=(255 / 255., 127 / 255., 14 / 255.), alpha=0.6)
-        g1 = ax.scatter(sig_vs_sig['log2FoldChange_x'], sig_vs_sig['log2FoldChange_y'], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
+        g4 = ax.scatter(NS_vs_NS[log2FoldChange_x], NS_vs_NS[log2FoldChange_y], s=9, c='grey', alpha=0.3)
+        g3 = ax.scatter(NS_vs_sig[log2FoldChange_x], NS_vs_sig[log2FoldChange_y], s=9, c=(31 / 255., 119 / 255., 180 / 255.), alpha=0.6)
+        g2 = ax.scatter(sig_vs_NS[log2FoldChange_x], sig_vs_NS[log2FoldChange_y], s=9, c=(255 / 255., 127 / 255., 14 / 255.), alpha=0.6)
+        g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
 
     filename_1 = re.search(r".+\/(.+).tsv", file_path_1).group(1)
     filename_2 = re.search(r".+\/(.+).tsv", file_path_2).group(1)
@@ -53,10 +74,10 @@ def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', 
     xtitle = xtitle.replace('.', ' ')
     ytitle = filename_2.replace('_', ' ')
     ytitle = ytitle.replace('.', ' ')
-    ax.set_xlim(min(non_NA_set['log2FoldChange_x'].min(), non_NA_set['log2FoldChange_y'].min()) - 0.5, 
-            max(non_NA_set['log2FoldChange_x'].max(), non_NA_set['log2FoldChange_y'].max()) + 0.5)
-    ax.set_ylim(min(non_NA_set['log2FoldChange_x'].min(), non_NA_set['log2FoldChange_y'].min()) - 0.5, 
-            max(non_NA_set['log2FoldChange_x'].max(), non_NA_set['log2FoldChange_y'].max()) + 0.5)
+    ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
+            max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
+    ax.set_ylim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
+            max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
     ax.axvline(x=0, linestyle='dotted', color='grey')
     ax.axhline(y=0, linestyle='dotted', color='grey')
     ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=16, y=1.02)
@@ -76,28 +97,34 @@ def scatter_plot(file_path_1, file_path_2, plot_out_dir='./', dat_out_dir='./', 
 
     if for_cluster_plot == False and return_sig_plot == False:
         fig.savefig(plot_out_dir + '/' + filename_1 + '_vs_' + filename_2 + '_scatter_plot.png')
-        if sig_discordant.shape[0] > 0:
+        if sig_discordant is not None and sig_discordant.shape[0] > 0:
             discordant_path = dat_out_dir + '/' + filename_1 + '_vs_' + filename_2 + '_disagreeing_genes.tsv'
             sig_discordant.to_csv(discordant_path, sep='\t', index=False)
         else:
             discordant_path = None
 
-        if sig_concordant.shape[0] > 0:
+        if sig_concordant is not None and sig_concordant.shape[0] > 0:
             concordant_path = dat_out_dir + '/' + filename_1 + '_vs_' + filename_2 + '_agreeing_genes.tsv'
             sig_concordant.to_csv(concordant_path, sep='\t', index=False)
         else:
             concordant_path = None
+        
+        if all_sig is not None and all_sig.shape[0] > 0:
+            all_sig_path = dat_out_dir + '/' + filename_1 + 'vs' + filename_2 + 'vs_more_all_sig_genes.tsv'
+            all_sig.to_csv(all_sig_path, sep='\t', index=False)
+        else:
+            all_sig_path = None
 
-        return {'discordant_path': discordant_path, 'concordant_path': concordant_path}
+        return {'discordant_path': discordant_path, 'concordant_path': concordant_path, 'all_sig_path': all_sig_path}
     
     elif for_cluster_plot == True:
-        return {'plot': ax, 'discordant': sig_discordant, 'concordant': sig_concordant}   
+        return {'plot': ax, 'discordant': sig_discordant, 'concordant': sig_concordant, 'all_sig': all_sig}   
     
     else:
-        g4 = ax.scatter(NS_vs_NS['log2FoldChange_x'], NS_vs_NS['log2FoldChange_y'], s=9, c='grey', alpha=0.3)
-        g3 = ax.scatter(NS_vs_sig['log2FoldChange_x'], NS_vs_sig['log2FoldChange_y'], s=9, c='grey', alpha=0.6)
-        g2 = ax.scatter(sig_vs_NS['log2FoldChange_x'], sig_vs_NS['log2FoldChange_y'], s=9, c='grey', alpha=0.6)
-        g1 = ax.scatter(sig_vs_sig['log2FoldChange_x'], sig_vs_sig['log2FoldChange_y'], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
+        g4 = ax.scatter(NS_vs_NS[log2FoldChange_x], NS_vs_NS[log2FoldChange_y], s=9, c='grey', alpha=0.3)
+        g3 = ax.scatter(NS_vs_sig[log2FoldChange_x], NS_vs_sig[log2FoldChange_y], s=9, c='grey', alpha=0.6)
+        g2 = ax.scatter(sig_vs_NS[log2FoldChange_x], sig_vs_NS[log2FoldChange_y], s=9, c='grey', alpha=0.6)
+        g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
         ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
         return ax
 
