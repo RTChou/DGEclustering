@@ -18,6 +18,7 @@ def main():
     warnings.filterwarnings('ignore') # ignore runtime warnings
     temp = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, plot_out_dir=args.plot_dir, dat_out_dir=args.data_dir, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
     
+    # return sig plot
     # TODO: store files in database
 
     plt.close()

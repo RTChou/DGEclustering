@@ -17,12 +17,13 @@ def main():
     parser.add_argument('-l', '--list', nargs='+', required=True, help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
     parser.add_argument('-n1', 'x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
     parser.add_argument('-n2', 'y_file_number', default=0, type=int, help='file number in list for y axis. index starts at 0')
+    parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name') 
     parser.add_argument('-r', '--clustering_result', required=True, help='file path of the clustering result')
-    parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name')
-    parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
-    parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
-    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
-    parser.add_argument('-s', '--sig_data', default='all', help='one of \'dis\', \'con\', \'all\' (dis + con), or \'multi\'')
+    parser.add_argument('-m', '--MCA_result', help='file path of the MCA result')
+  #  parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
+  #  parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
+  #  parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
+  #  parser.add_argument('-s', '--sig_data', default='all', help='one of \'dis\', \'con\', \'all\' (dis + con), or \'multi\'')
     parser.add_argument('-c', '--color', default='brg', help='cmap color for visualization')
     args = parser.parse_args()
     
@@ -59,6 +60,8 @@ def main():
         group_list.append(sig[sig['ind'] == 'Group.' + str(i)].reset_index(drop=True))
         i += 1   
     cmap = cm.get_cmap(args.color)(np.linspace(0, 1.0, len(group_list)))
+    if args.MCA_result is not None:
+        MCA = pd.read_table(args.MCA_result)
     log2FoldChange_x = str(x_file_number) + '_log2FoldChange'
     log2FoldChange_y = str(y_file_number) + '_log2FoldChange'
 
@@ -86,7 +89,6 @@ def main():
                     linestyle='dashed', linewidth=0.5, c=color, alpha=0.3)
         
         # encircle the group points
-        # corr = np.corrcoef(x, y)[0, 1]
         slope, intercept, r_value, p_value, std_err = linregress(x,y)
         angle = math.degrees(math.atan(slope))
         if np.std(x) < np.std(y):
