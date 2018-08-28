@@ -18,10 +18,10 @@ def main():
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
-    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue, 1 as True, 0 as False')
-    parser.add_argument('-q', '--qq_plot', default=1, type=int, help='generate Q-Q plots, 1 as True, 0 as False')
-    parser.add_argument('-f', '--fish_plot', default=1, type=int, help='generate fish plots, 1 as True, 0 as False')
-    parser.add_argument('-s', '--scatter_plot', default=1, type=int, help='generate scatter plots, 1 as True, 0 as False')
+    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
+    parser.add_argument('-q', '--qq_plot', default=1, type=int, help='generate Q-Q plots. 1 as True, 0 as False')
+    parser.add_argument('-f', '--fish_plot', default=1, type=int, help='generate fish plots. 1 as True, 0 as False')
+    parser.add_argument('-s', '--scatter_plot', default=1, type=int, help='generate scatter plots. 1 as True, 0 as False')
     args = parser.parse_args()
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
@@ -142,7 +142,7 @@ def main():
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plots')
         if args.scatter_plot == 1:
             file_paths = [paired_file['file_1'], paired_file['file_2']]
-            temp = plotting.scatter_plot(file_paths, plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
+            temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
             if temp['discordant_path'] is not None:            
                 c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
             if temp['concordant_path'] is not None:
