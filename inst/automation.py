@@ -141,7 +141,8 @@ def main():
         if args.fish_plot == 1:
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], args.root_dir+'/fish_plots')
         if args.scatter_plot == 1:
-            temp = plotting.scatter_plot(paired_file['file_1'], paired_file['file_2'], plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
+            file_paths = [paired_file['file_1'], paired_file['file_2']]
+            temp = plotting.scatter_plot(file_paths, plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
             if temp['discordant_path'] is not None:            
                 c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
             if temp['concordant_path'] is not None:
