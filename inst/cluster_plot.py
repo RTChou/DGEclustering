@@ -14,7 +14,7 @@ import warnings
 def main():
     parser = argparse.ArgumentParser(description="This script is for clustering visulization of RNA-seq paired DGE files")
     parser.add_argument('-d', '--out_dir', required=True, help='output directory for resulting plots')
-    parser.add_argument('-f', '--files', nargs='+', help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
+    parser.add_argument('-f', '--file_paths', nargs='+', help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
     parser.add_argument('-m', '--MCA_result', default=0, type=int, help='whether or not the input is a MCA result. 1 as True, 0 as False')
     parser.add_argument('-n1', 'x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
     parser.add_argument('-n2', 'y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
@@ -29,14 +29,14 @@ def main():
     clustered_dat = pd.read_table(args.clustering_result)   
     
     if args.MCA_result == 0:
-        dataset_1 = pd.read_table(args.files[args.x_file_number])
-        dataset_2 = pd.read_table(args.files[args.y_file_number])
+        dataset_1 = pd.read_table(args.file_paths[args.x_file_number])
+        dataset_2 = pd.read_table(args.file_paths[args.y_file_number])
         merged_set = dataset_1.merge(dataset_2, left_on=args.gene_col, right_on=args.gene_col)
         merged_set = merged_set.merge(clustered_dat, left_on=args.gene_col, right_on=clustered_dat.columns[0], how='inner')
         x_axis = 'log2FoldChange_x'
         y_axis = 'log2FoldChange_y'
     else:
-        MCA = pd.read_table(args.files[0])
+        MCA = pd.read_table(args.file_paths[0])
         merged_set = MCA.merge(clustered_dat, left_on=MCA.columns[0], right_on=clustered_dat.columns[0], how='inner')
         x_axis = 'V1'
         y_axis = 'V2'
