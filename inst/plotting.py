@@ -8,7 +8,7 @@ from matplotlib.offsetbox import AnchoredText
 from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
-def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False, out_file_name=None):
+def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False, out_file_name=None):
     # check input file names for regex search
     for index, file_path in enumerate(file_paths):
         if re.search(r".+\/(.+).tsv", file_path) == None:
@@ -20,7 +20,7 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     keys = np.arange(len(datasets)).astype(str)
     merged_set = pd.concat([x.set_index(gene_col) for x in datasets], axis=1, keys=keys)
     merged_set.columns = merged_set.columns.map('_'.join)
-    
+
     # create output filepath
     filename_1 = re.search(r".+\/(.+).tsv", file_paths[x_file_number]).group(1)
     filename_2 = re.search(r".+\/(.+).tsv", file_paths[y_file_number]).group(1)
@@ -29,8 +29,8 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     else:
         out = dat_out_dir + '/' + out_file_name
 
-   # create subsets
-   if adj_pvalue == True:
+    # create subsets
+    if adj_pvalue == True:
         padj_x = str(x_file_number) + '_padj'
         padj_y = str(y_file_number) + '_padj'
         sig_vs_sig = merged_set[(merged_set[padj_x] < x_threshold) & (merged_set[padj_y] < y_threshold)]
@@ -56,7 +56,7 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     sig_concordant = None
     all_sig = None
 
-    if len(datasets == 2):
+    if len(datasets) == 2:
         sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
                   ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
         sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) |
@@ -71,7 +71,7 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
 
     # -- plotting section --
     xtitle = filename_1.replace('_', ' ').replace('.', ' ')
-    ytitle = filename_2.replace('_', ' ').replace('.'. ' ')
+    ytitle = filename_2.replace('_', ' ').replace('.', ' ')
 
     # general scatter plot
     fig = plt.figure(figsize=(18, 18))
@@ -112,7 +112,7 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     # significant scatter plot
     if return_sig_plot == True:
         # set plotting parameters
-        if len(datasets == 2):
+        if len(datasets) == 2:
             title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
             anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
             anchored_text.patch.set(color='red', alpha=0.3)
@@ -125,9 +125,9 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
         ax = fig.add_subplot(111)
        
         g2 = ax.scatter(non_NA_set[log2FoldChange_x], non_NA_set[log2FoldChange_y], s=9, c='grey', alpha=0.3)
-        if len(datasets == 2):
+        if len(datasets) == 2:
             g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-            ax.legend((g1,), ('all sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
+            ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
         else:
             g1 = ax.scatter(all_sig[log2FoldChange_x], all_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
             ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1)    
@@ -155,7 +155,7 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     
     # plotting frame for cluster plot
     if for_cluster_plot == True:
-        if len(datasets == 2):
+        if len(datasets) == 2:
             title = '(' + xtitle + ') vs (' + ytitle + ')'
         else:
             title = '(' + xtitle + ') vs (' + ytitle + ') (multi-dimensional)'

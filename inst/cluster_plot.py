@@ -16,8 +16,8 @@ def main():
     parser.add_argument('-d', '--out_dir', required=True, help='output directory for resulting plots')
     parser.add_argument('-f', '--file_paths', nargs='+', help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
     parser.add_argument('-m', '--MCA_result', default=0, type=int, help='whether or not the input is a MCA result. 1 as True, 0 as False')
-    parser.add_argument('-n1', 'x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
-    parser.add_argument('-n2', 'y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
+    parser.add_argument('-n1', '--x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
+    parser.add_argument('-n2', '--y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
     parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name') 
     parser.add_argument('-r', '--clustering_result', required=True, help='file path of the clustering result')
     parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
@@ -55,7 +55,7 @@ def main():
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if args.MCA_result == 0:
-        ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+        ax = plotting.scatter_plot(file_paths=args.list, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     else:
         title = 'MCA plot'
         xtitle = 'Dim1'
@@ -107,7 +107,7 @@ def main():
         fig = plt.figure(figsize=(18, 18))
         ax = fig.add_subplot(111)
         if args.MCA_result == 0:
-            ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+            ax = plotting.scatter_plot(file_paths=args.list, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
         else:
             title = 'MCA plot'
             xtitle = 'Dim1'

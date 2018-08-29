@@ -1,5 +1,5 @@
 #' @export
-multidim.plot <- function(filePaths, x.fileNumber=1, y.fileNumber=2, plotDir, datDir, outputName=NULL, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
+multidim.plot <- function(filePaths, geneCol, x.fileNumber=1, y.fileNumber=2, plotDir, datDir, outputName=NULL, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
@@ -10,7 +10,8 @@ multidim.plot <- function(filePaths, x.fileNumber=1, y.fileNumber=2, plotDir, da
   if (!is.null(outputName)) {
     system(paste(path,
                '-f', paste(filePaths, collapse=' '),
-               '-n1', x.fileNumber - 1,
+               '-g', geneCol,
+	       '-n1', x.fileNumber - 1,
                '-n2', y.fileNumber - 1,
                '-p', plotDir,
                '-d', datDir,
@@ -22,7 +23,8 @@ multidim.plot <- function(filePaths, x.fileNumber=1, y.fileNumber=2, plotDir, da
   else{
     system(paste(path,
                '-f', paste(filePaths, collapse=' '),
-               '-n1', x.fileNumber - 1,
+               '-g', geneCol,
+	       '-n1', x.fileNumber - 1,
                '-n2', y.fileNumber - 1,
                '-p', plotDir,
                '-d', datDir,
