@@ -7,7 +7,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
   integrated.matrix = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
   integrated.matrix <- apply(integrated.matrix, 2, as.factor)
-  MCA.res = MCAsimple(integrated.matrix)[, 1:nb.dim.an]
+  MCA.matrix = MCAsimple(integrated.matrix)[, 1:nb.dim.an]
 
   if (clust.method != 'genclust'){
     DIST <- dist(MCA.res, diag=TRUE, upper=TRUE)
@@ -119,7 +119,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
     names(groups) = paste('Group', 1:g, sep = '.')
   }
 
-  res <- list(groups, integrated.matrix, MCA.res)
-  names(res) <- c('groups', 'integrated.matrix', 'MCA.res')
+  res <- list(groups, integrated.matrix, MCA.matrix)
+  names(res) <- c('groups', 'integrated.matrix', 'MCA.res.matrix')
   return(res)
 }
