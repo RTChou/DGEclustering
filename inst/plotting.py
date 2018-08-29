@@ -9,7 +9,7 @@ from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
 def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False, out_file_name=None):
-    # check input file names
+    # check input file names for regex search
     for index, file_path in enumerate(file_paths):
         if re.search(r".+\/(.+).tsv", file_path) == None:
             file_paths[index] = './' + file_path

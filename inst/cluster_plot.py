@@ -25,41 +25,54 @@ def main():
     args = parser.parse_args()
     
     warnings.filterwarnings('ignore') # ignore runtime warnings
-
-    # prepare for cluster plotting
-    plt.close()
-    fig = plt.figure(figsize=(18, 18))
-    ax = fig.add_subplot(111)
-    if args.MCA_result == 0:
-        ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     
     clustered_dat = pd.read_table(args.clustering_result)   
-    dataset_1 = pd.read_table(args.list[args.x_file_number])
-    dataset_2 = pd.read_table(args.list[args.y_file_number])
-    merged_set = dataset_1.merge(dataset_2, left_on = args.gene_col, right_on = args.gene_col)
     
-    
-    sig = dataset_1.merge(dataset_2, left_on=('0_' + args.gene_col), right_on=clustered_dat.columns[0], how='inner')
- 
-    # significant data
+    if args.MCA_result == 0:
+        dataset_1 = pd.read_table(args.files[args.x_file_number])
+        dataset_2 = pd.read_table(args.files[args.y_file_number])
+        merged_set = dataset_1.merge(dataset_2, left_on=args.gene_col, right_on=args.gene_col)
+        merged_set = merged_set.merge(clustered_dat, left_on=args.gene_col, right_on=clustered_dat.columns[0], how='inner')
+        x_axis = 'log2FoldChange_x'
+        y_axis = 'log2FoldChange_y'
+    else:
+        MCA = pd.read_table(args.files[0])
+        merged_set = MCA.merge(clustered_dat, left_on=MCA.columns[0], right_on=clustered_dat.columns[0], how='inner')
+        x_axis = 'V1'
+        y_axis = 'V2'
+
+    # split dataset
     i = 1
     group_list = list()
     while ('Group.' + str(i)) in sig['ind'].tolist():
         group_list.append(sig[sig['ind'] == 'Group.' + str(i)].reset_index(drop=True))
         i += 1   
     cmap = cm.get_cmap(args.color)(np.linspace(0, 1.0, len(group_list)))
-    if args.MCA_result is not None:
-        MCA = pd.read_table(args.MCA_result)
-    log2FoldChange_x = str(x_file_number) + '_log2FoldChange'
-    log2FoldChange_y = str(y_file_number) + '_log2FoldChange'
 
-    # main plot
+    # -- main plot --
+    # prepare plotting axes
+    plt.close()
+    fig = plt.figure(figsize=(18, 18))
+    ax = fig.add_subplot(111)
+    if args.MCA_result == 0:
+        ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+    else:
+        title = 'MCA plot'
+        xtitle = 'Dim1'
+        ytitle = 'Dim2'
+        # ax.axvline(x=0, linestyle='dotted', color='grey')
+        # ax.axhline(y=0, linestyle='dotted', color='grey')
+        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
+        ax.set_xlabel(xtitle, fontsize=15)
+        ax.set_ylabel(ytitle, fontsize=15)
+    
+    # plotting
     groups = list()
     group_names = list()  
     for index, group in enumerate(group_list):
         color = cmap[index]
-        x = group[log2FoldChange_x]
-        y = group[log2FoldChange_y]
+        x = group[x_axis]
+        y = group[y_axis]
 
         # plot the centroid for each cluster
         cx = np.mean(x)
@@ -85,21 +98,29 @@ def main():
         ax.add_patch(ell)
     
     ax.legend(groups, group_names, markerscale=1)
-    # plt.show()
     plt.savefig(args.out_dir + '/cluster_all.png')
 
-    # subplots
+    # -- subplots --
     for j in range(0, len(group_list)):
+        # prepare plotting axes
         plt.close()
-        fig = plt.figure(figsize=(10, 10))
+        fig = plt.figure(figsize=(18, 18))
         ax = fig.add_subplot(111)
-        temp = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
-        ax = temp['plot']
-
+        if args.MCA_result == 0:
+            ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+        else:
+            title = 'MCA plot'
+            xtitle = 'Dim1'
+            ytitle = 'Dim2'
+            ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
+            ax.set_xlabel(xtitle, fontsize=15)
+            ax.set_ylabel(ytitle, fontsize=15)
+        
+        # plotting
         for index, group in enumerate(group_list):
             color = cmap[index]
-            x = group[log2FoldChange_x]
-            y = group[log2FoldChange_y]
+            x = group[x_axis]
+            y = group[y_axis]
 
             if index != j:
                 # plot the centroid for each cluster
@@ -128,8 +149,8 @@ def main():
         
         # plot the centroid for cluster j
         color = cmap[j]
-        x = group_list[j][log2FoldChange_x]
-        y = group_list[j][log2FoldChange_y]
+        x = group_list[j][x_axis]
+        y = group_list[j][y_axis]
         
         cx = np.mean(x)
         cy = np.mean(y)
