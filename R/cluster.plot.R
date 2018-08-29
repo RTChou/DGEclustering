@@ -1,5 +1,5 @@
 #' @export
-cluster.plot <- function(outDir, filePaths, MCA=FALSE, x.fileNumber=0, y.fileNumber=1, geneCol, clusterFilePath, adjPvalue=TRUE, color='brg'){
+cluster.plot <- function(outDir, filePaths, MCA=FALSE, x.fileNumber=1, y.fileNumber=2, geneCol, clusterFilePath, adjPvalue=TRUE, color='brg'){
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
@@ -11,8 +11,8 @@ cluster.plot <- function(outDir, filePaths, MCA=FALSE, x.fileNumber=0, y.fileNum
                '-d', outDir,
                '-f', paste(filePaths, collapse=' '),
                '-m', python.boolean.convert(MCA),
-               '-n1', x.fileNumber,
-	       '-n2', y.fileNumber,
+               '-n1', x.fileNumber - 1,
+	       '-n2', y.fileNumber - 1,
 	       '-g', geneCol,
 	       '-r', clusterFilePath,
                '-a', python.boolean.convert(adjPvalue),
