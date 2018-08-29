@@ -1,5 +1,5 @@
 #' @export
-multidim.plot <- function(filePaths, x.fileNumber=0, y.fileNumber=1, plotDir, datDir, outputName, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
+multidim.plot <- function(filePaths, x.fileNumber=0, y.fileNumber=1, plotDir, datDir, outputName=NULL, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
@@ -7,7 +7,8 @@ multidim.plot <- function(filePaths, x.fileNumber=0, y.fileNumber=1, plotDir, da
       return('0')
   }
   path <- paste(system.file(package='DGEclustering'), 'automation.py', sep='/')
-  system(paste(path,
+  if (!is.null(outputName)) {
+    system(paste(path,
                '-f', paste(filePaths, collapse=' '),
                '-n1', x.fileNumber,
                '-n2', y.fileNumber,
@@ -16,5 +17,18 @@ multidim.plot <- function(filePaths, x.fileNumber=0, y.fileNumber=1, plotDir, da
                '-o', outputName,
                '-x', x.threshold,
                '-y', y.threshold,
-	       '-y', python.boolean.convert(adjPvalue)))
+               '-y', python.boolean.convert(adjPvalue)))
+  }
+  else{
+    system(paste(path,
+               '-f', paste(filePaths, collapse=' '),
+               '-n1', x.fileNumber,
+               '-n2', y.fileNumber,
+               '-p', plotDir,
+               '-d', datDir,
+               '-x', x.threshold,
+               '-y', y.threshold,
+               '-y', python.boolean.convert(adjPvalue)))
+  }
 }
+
