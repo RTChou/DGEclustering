@@ -6,7 +6,7 @@ multidim.plot <- function(filePaths, x.fileNumber=1, y.fileNumber=2, plotDir, da
     else
       return('0')
   }
-  path <- paste(system.file(package='DGEclustering'), 'automation.py', sep='/')
+  path <- paste(system.file(package='DGEclustering'), 'multidim_plot.py', sep='/')
   if (!is.null(outputName)) {
     system(paste(path,
                '-f', paste(filePaths, collapse=' '),
