@@ -11,10 +11,10 @@ cluster.plot <- function(outDir, filePaths, MCA=FALSE, x.fileNumber=0, y.fileNum
                '-d', outDir,
                '-f', paste(filePaths, collapse=' '),
                '-m', python.boolean.convert(MCA),
-               '-n1', x.fileNumber, 
-	       '-n2', y.fileNumber,
-	       '-g', geneCol,
-	       '-r', clusterFilePath,
+               '-n1', x.fileNumber,
+	             '-n2', y.fileNumber,
+	             '-g', geneCol,
+	             '-r', clusterFilePath,
                '-a', python.boolean.convert(adjPvalue),
                '-c', color))
 }

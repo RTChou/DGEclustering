@@ -6,8 +6,8 @@ cluster.sim.plot <- function(method1.groups, method2.groups, OrgDb, keytype, ont
   sim.matrix <- matrix(NA, nrow=length(method1.groups), ncol=length(method2.groups))
   for (i in 1:length(method1.groups)){
     for (j in 1:length(method2.groups)){
-      c1 <- mapIds(OrgDb, keys=unlist(method1.groups[i]), column="ENTREZID", keytype=keytype, multiVals="first")
-      c2 <- mapIds(OrgDb, keys=unlist(method2.groups[j]), column="ENTREZID", keytype=keytype, multiVals="first")
+      c1 <- mapIds(OrgDb, keys=unlist(method1.groups[i]), column='ENTREZID', keytype=keytype, multiVals='first')
+      c2 <- mapIds(OrgDb, keys=unlist(method2.groups[j]), column='ENTREZID', keytype=keytype, multiVals='first')
       semData <- godata(OrgDb=OrgDb, ont=ont, computeIC=FALSE)
       sim.matrix[i, j] <- clusterSim(c1, c2, semData=semData, measure='Wang')
     }

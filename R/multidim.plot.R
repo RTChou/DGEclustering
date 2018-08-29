@@ -1,5 +1,5 @@
 #' @export
-automation <- function(rootDir, geneCol, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE){
+multidim.plot <- function(files, x.fileNumber=0, y.fileNumber=1) {
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')

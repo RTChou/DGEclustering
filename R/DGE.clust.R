@@ -120,6 +120,6 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   }
 
   res <- list(groups, integrated.matrix, MCA.matrix)
-  names(res) <- c('groups', 'integrated.matrix', 'MCA.res.matrix')
+  names(res) <- c('groups', 'integrated.matrix', 'MCA.matrix')
   return(res)
 }
