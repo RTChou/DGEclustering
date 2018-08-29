@@ -1,21 +1,20 @@
 #' @export
-cluster.plot <- function(outDir, filePath1, filePath2, clusterFilePath, geneCol, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, sigData='ALL', color='brg'){
+cluster.plot <- function(outDir, filePaths, MCA=FALSE, x.fileNumber=0, y.fileNumber=1, geneCol, clusterFilePath, adjPvalue=TRUE, color='brg'){
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
     else
       return('0')
   }
-  path <- paste(system.file(package="DGEclustering"), "cluster_plot.py", sep="/")
+  path <- paste(system.file(package='DGEclustering'), 'cluster_plot.py', sep='/')
   system(paste(path,
                '-d', outDir,
-               '-f1', filePath1,
-               '-f2', filePath2,
-               '-r', clusterFilePath,
-               '-g', geneCol,
-               '-x', x.threshold,
-               '-y', y.threshold,
+               '-f', paste(filePaths, collapse=' '),
+               '-m', python.boolean.convert(MCA),
+               '-n1', x.fileNumber, 
+	       '-n2', y.fileNumber,
+	       '-g', geneCol,
+	       '-r', clusterFilePath,
                '-a', python.boolean.convert(adjPvalue),
-               '-s', sigData,
                '-c', color))
 }
