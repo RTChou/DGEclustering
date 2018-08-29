@@ -14,39 +14,34 @@ import warnings
 def main():
     parser = argparse.ArgumentParser(description="This script is for clustering visulization of RNA-seq paired DGE files")
     parser.add_argument('-d', '--out_dir', required=True, help='output directory for resulting plots')
-    parser.add_argument('-l', '--list', nargs='+', required=True, help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
+    parser.add_argument('-f', '--files', nargs='+', help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
+    parser.add_argument('-m', '--MCA_result', default=0, type=int, help='whether or not the input is a MCA result. 1 as True, 0 as False')
     parser.add_argument('-n1', 'x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
-    parser.add_argument('-n2', 'y_file_number', default=0, type=int, help='file number in list for y axis. index starts at 0')
+    parser.add_argument('-n2', 'y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
     parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name') 
     parser.add_argument('-r', '--clustering_result', required=True, help='file path of the clustering result')
-    parser.add_argument('-m', '--MCA_result', help='file path of the MCA result')
-  #  parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
-  #  parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
-  #  parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
-  #  parser.add_argument('-s', '--sig_data', default='all', help='one of \'dis\', \'con\', \'all\' (dis + con), or \'multi\'')
+    parser.add_argument('-a', '--adj_pvalue', default=1, type=int, help='whether to use adjusted pvalue or pvalue. 1 as True, 0 as False')
     parser.add_argument('-c', '--color', default='brg', help='cmap color for visualization')
     args = parser.parse_args()
     
     warnings.filterwarnings('ignore') # ignore runtime warnings
-    
-    # generate sig data-only plot
-    fig = plt.figure(figsize=(10, 10))
-    ax = fig.add_subplot(111)
-    ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True)
-    plt.savefig(args.out_dir + '/sig_data.png')
 
     # prepare for cluster plotting
     plt.close()
-    fig = plt.figure(figsize=(10, 10))
+    fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
-    temp = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
-    ax = temp['plot']
+    if args.MCA_result == 0:
+        ax = plotting.scatter_plot(file_paths=args.list, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     
     clustered_dat = pd.read_table(args.clustering_result)   
-    ## merge with file1 file2
-    sig = sig.merge(clustered_dat, left_on=('0_' + args.gene_col), right_on=clustered_dat.columns[0])
+    dataset_1 = pd.read_table(args.list[args.x_file_number])
+    dataset_2 = pd.read_table(args.list[args.y_file_number])
+    merged_set = dataset_1.merge(dataset_2, left_on = args.gene_col, right_on = args.gene_col)
+    
+    
+    sig = dataset_1.merge(dataset_2, left_on=('0_' + args.gene_col), right_on=clustered_dat.columns[0], how='inner')
  
-    # plot clusters from significant data
+    # significant data
     i = 1
     group_list = list()
     while ('Group.' + str(i)) in sig['ind'].tolist():

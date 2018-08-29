@@ -5,9 +5,9 @@ import warnings
 
 def main():
     parser = argparse.ArgumentParser(description="This script is for plotting and generating datasets for multi-dimensional clustering")
-    parser.add_argument('-l', '--list', nargs='+', required=True, help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
+    parser.add_argument('-f', '--files', nargs='+', required=True, help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
     parser.add_argument('-n1', 'x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
-    parser.add_argument('-n2', 'y_file_number', default=0, type=int, help='file number in list for y axis. index starts at 0')
+    parser.add_argument('-n2', 'y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
     parser.add_argument('-p', '--plot_dir', required=True, help='plotting directory')
     parser.add_argument('-d', '--data_dir', required=True, help='significant data directory')
     parser.add_argument('-o', '--output', default=None, help='output file name')

@@ -22,12 +22,15 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     merged_set.columns = merged_set.columns.map('_'.join)
     
     # create output filepath
+    filename_1 = re.search(r".+\/(.+).tsv", file_paths[x_file_number]).group(1)
+    filename_2 = re.search(r".+\/(.+).tsv", file_paths[y_file_number]).group(1)
     if out_file_name == None:
         out = dat_out_dir + '/' + filename_1 + 'vs' + filename_2
     else:
         out = dat_out_dir + '/' + out_file_name
 
-    if adj_pvalue == True:
+   # create subsets
+   if adj_pvalue == True:
         padj_x = str(x_file_number) + '_padj'
         padj_y = str(y_file_number) + '_padj'
         sig_vs_sig = merged_set[(merged_set[padj_x] < x_threshold) & (merged_set[padj_y] < y_threshold)]
@@ -48,16 +51,29 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
     log2FoldChange_x = str(x_file_number) + '_log2FoldChange'
     log2FoldChange_y = str(y_file_number) + '_log2FoldChange'
     
-    # generate scatter plots
-    filename_1 = re.search(r".+\/(.+).tsv", file_path_1).group(1)
-    filename_2 = re.search(r".+\/(.+).tsv", file_path_2).group(1)
-    xtitle = filename_1.replace('_', ' ')
-    xtitle = xtitle.replace('.', ' ')
-    ytitle = filename_2.replace('_', ' ')
-    ytitle = ytitle.replace('.', ' ')
-    anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
-    anchored_text.patch.set(color='red', alpha=0.3)
+    # prepare output significant dataset(s)
+    sig_discordant = None
+    sig_concordant = None
+    all_sig = None
 
+    if len(datasets == 2):
+        sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
+                  ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
+        sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) |
+                  ((sig_vs_sig[log2FoldChange_x] <= 0) & (sig_vs_sig[log2FoldChange_y] <= 0))]
+
+    else: # the significant threshold will be x_threshold for multiple files
+        if adj_pvalue == True:
+            temp = pd.concat((sig_vs_sig['%i_padj'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
+        else:
+            temp = pd.concat((sig_vs_sig['%i_pvalue'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
+        all_sig = sig_vs_sig[temp]
+
+    # -- plotting section --
+    xtitle = filename_1.replace('_', ' ').replace('.', ' ')
+    ytitle = filename_2.replace('_', ' ').replace('.'. ' ')
+
+    # general scatter plot
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if for_cluster_plot == False:
@@ -81,37 +97,69 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
-        ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=16, y=1.02)
+
+        title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
+        anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
+        anchored_text.patch.set(color='red', alpha=0.3)
+
+        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
         ax.add_artist(anchored_text)
         
         fig.savefig(out + '_scatter_plot.png')
-
+    
+    # significant scatter plot
     if return_sig_plot == True:
+        # set plotting parameters
+        if len(datasets == 2):
+            title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
+            anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
+            anchored_text.patch.set(color='red', alpha=0.3)
+        else:
+            title = '(' + xtitle + ') vs (' + ytitle + ') (multi-dimensional)'
+            anchored_text = None
+
         plt.close()
         fig = plt.figure(figsize=(18, 18))
         ax = fig.add_subplot(111)
-        g4 = ax.scatter(NS_vs_NS[log2FoldChange_x], NS_vs_NS[log2FoldChange_y], s=9, c='grey', alpha=0.3)
-        g3 = ax.scatter(NS_vs_sig[log2FoldChange_x], NS_vs_sig[log2FoldChange_y], s=9, c='grey', alpha=0.6)
-        g2 = ax.scatter(sig_vs_NS[log2FoldChange_x], sig_vs_NS[log2FoldChange_y], s=9, c='grey', alpha=0.6)
-        g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-        
-        ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
+       
+        g2 = ax.scatter(non_NA_set[log2FoldChange_x], non_NA_set[log2FoldChange_y], s=9, c='grey', alpha=0.3)
+        if len(datasets == 2):
+            g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
+            ax.legend((g1,), ('all sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
+        else:
+            g1 = ax.scatter(all_sig[log2FoldChange_x], all_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
+            ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1)    
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.set_ylim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
-        ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=16, y=1.02)
+        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
         ax.add_artist(anchored_text)
         
         fig.savefig(out + '_sig_plot.png')
 
+        if sig_discordant is not None and sig_discordant.shape[0] > 0:
+            sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=False)
+
+        if sig_concordant is not None and sig_concordant.shape[0] > 0:
+            sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=False)
+
+        if all_sig is not None and all_sig.shape[0] > 0:
+            all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=False)
+    
+    # plotting frame for cluster plot
     if for_cluster_plot == True:
+        if len(datasets == 2):
+            title = '(' + xtitle + ') vs (' + ytitle + ')'
+        else:
+            title = '(' + xtitle + ') vs (' + ytitle + ') (multi-dimensional)'
+        
         plt.close()
         fig = plt.figure(figsize=(18, 18))
         ax = fig.add_subplot(111)
@@ -121,44 +169,14 @@ def scatter_plot(file_paths, x_file_number=0, y_file_number=1, gene_col, plot_ou
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
-        ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=16, y=1.02)
+        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
         
-        # return plotting frame
         return ax
 
-    # generate significant files
-    if return_sig_plot == True:
-        # prepare for output dataset(s)
-        sig_discordant = None
-        sig_concordant = None
-        all_sig = None
-        
-        if len(datasets == 2):
-            sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
-                     ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
-            sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) |
-                     ((sig_vs_sig[log2FoldChange_x] <= 0) & (sig_vs_sig[log2FoldChange_y] <= 0))]
-        
-        else: # the significant threshold will be x_threshold
-            if adj_pvalue == True:
-                temp = pd.concat((sig_vs_sig['%i_padj'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
-            else:
-                temp = pd.concat((sig_vs_sig['%i_pvalue'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
-            all_sig = sig_vs_sig[temp]
-        
-        if sig_discordant is not None and sig_discordant.shape[0] > 0:
-            sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=False)
 
-        if sig_concordant is not None and sig_concordant.shape[0] > 0:
-            sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=False)
-        
-        if all_sig is not None and all_sig.shape[0] > 0:
-            all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=False)
-    
-
-def fish_plot(file_path_1, file_path_2, output_dir):
+def fish_plot(file_path_1, file_path_2, gene_col, output_dir):
     # check file names
     if re.search(r".+\/(.+).tsv", file_path_1) == None:
         file_path_1 = './' + file_path_1
@@ -167,7 +185,7 @@ def fish_plot(file_path_1, file_path_2, output_dir):
     
     dataset = pd.read_table(file_path_1)
     dataset_2 = pd.read_table(file_path_2)
-    merged_set = dataset.merge(dataset_2, left_on=dataset.columns[0], right_on=dataset_2.columns[0])
+    merged_set = dataset.merge(dataset_2, left_on=gene_col, right_on=gene_col)
     merged_set['-log10_pvalue_x'] = - np.sign(merged_set['log2FoldChange_x']) * np.sign(merged_set['log2FoldChange_y']) * np.log10(merged_set['pvalue_x'])
     merged_set['-log10_pvalue_y'] = - np.sign(merged_set['log2FoldChange_x']) * np.sign(merged_set['log2FoldChange_y']) * np.log10(merged_set['pvalue_y'])
 
