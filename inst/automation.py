@@ -10,7 +10,6 @@ import plotting
 from matplotlib.colors import ListedColormap
 import warnings
 import random
-import matplotlib.pyplot as plt
 
 def main():
     parser = argparse.ArgumentParser(description="This script is for RNA-seq DGE downstream workflow automation")
@@ -53,10 +52,6 @@ def main():
             file_path VARCHAR(255) NOT NULL,
             rmd_file_id INT NOT NULL,
             FOREIGN KEY (rmd_file_id) REFERENCES rnaseq_rmd_files(file_id)
-            );''')
-    c.execute('''CREATE TABLE sig_files (
-            file_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            file_path VARCHAR(755) NOT NULL
             );''')
     conn.commit()
 
@@ -119,8 +114,10 @@ def main():
     print("pairing files based on gene IDs, done!")
 
     # generate pairwaise comparison scatter plots
+    """
     conn = sql.connect(args.root_dir + '/rnaseq.db')
     c = conn.cursor()
+    """
 
     for paired_file in paired_files:
         # search the source Rmd files in db
@@ -132,6 +129,9 @@ def main():
             continue
         rmd_path = result[0][0]
         rmd_path_2 = result[1][0]
+        
+        conn.commit()
+        conn.close()
         """
 
         # emit plots and diagnostics
@@ -143,21 +143,12 @@ def main():
         if args.scatter_plot == 1:
             file_paths = [paired_file['file_1'], paired_file['file_2']]
             temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
-            if temp['discordant_path'] is not None:            
-                c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['discordant_path'],))
-            if temp['concordant_path'] is not None:
-                c.execute("INSERT INTO sig_files (file_path) VALUES (?)", (temp['concordant_path'],))
-
-    conn.commit()
-    conn.close()
 
     # generate null Q-Q plot
     if args.qq_plot == 1:
         random.seed(123)
         dataset = pd.DataFrame(data=np.random.uniform(low=0, high=1, size=17000), columns=['pvalue']) 
         plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', dataset=dataset)
-
-    plt.close()
 
 if __name__ == '__main__':
     main()

@@ -43,14 +43,7 @@ def main():
     ax = temp['plot']
     
     clustered_dat = pd.read_table(args.clustering_result)   
-    if args.sig_data == 'dis':
-        sig = temp['discordant']
-    elif args.sig_data == 'con':
-        sig = temp['concordant']
-    elif args.sig_data == 'all':
-        sig = temp['discordant'].append(temp['concordant'], ignore_index=True)
-    else:
-        sig = temp['all_sig']
+    ## merge with file1 file2
     sig = sig.merge(clustered_dat, left_on=('0_' + args.gene_col), right_on=clustered_dat.columns[0])
  
     # plot clusters from significant data
