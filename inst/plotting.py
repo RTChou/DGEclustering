@@ -73,7 +73,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     xtitle = filename_1.replace('_', ' ').replace('.', ' ')
     ytitle = filename_2.replace('_', ' ').replace('.', ' ')
 
-    # general scatter plot
+    # general scatter plot (data for the two specified files only)
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if for_cluster_plot == False:
@@ -99,6 +99,10 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.axhline(y=0, linestyle='dotted', color='grey')
 
         title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
+        #TODO need modify!
+        sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
+                   ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
+
         anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
         anchored_text.patch.set(color='red', alpha=0.3)
 
@@ -140,7 +144,9 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
-        ax.add_artist(anchored_text)
+        # TODO
+        if len(datasets) == 2:
+            ax.add_artist(anchored_text)
         
         fig.savefig(out + '_sig_plot.png')
 
