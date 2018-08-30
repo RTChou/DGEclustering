@@ -44,8 +44,8 @@ def main():
     # split dataset
     i = 1
     group_list = list()
-    while ('Group.' + str(i)) in sig['ind'].tolist():
-        group_list.append(sig[sig['ind'] == 'Group.' + str(i)].reset_index(drop=True))
+    while ('Group.' + str(i)) in merged_set['ind'].tolist():
+        group_list.append(merged_set[merged_set['ind'] == 'Group.' + str(i)].reset_index(drop=True))
         i += 1   
     cmap = cm.get_cmap(args.color)(np.linspace(0, 1.0, len(group_list)))
 
