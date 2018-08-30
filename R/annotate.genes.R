@@ -3,7 +3,7 @@
 annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=FALSE, BgGenes=NULL, ont='ALL'){
   dataset <- pairedDataset
   universe <- BgGenes
-  ds.keys <- sapply(dataset[paste(geneCol, 'x', sep='_')], as.character)
+  ds.keys <- sapply(dataset[geneCol], as.character)
   unv.keys <- sapply(universe, as.character)
 
   if (GOEnrichment == FALSE){
@@ -21,7 +21,7 @@ annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=
     GO.term <- GO.res[row, 'GO']
     if (!GO.term %in% colnames(dataset))
       dataset[GO.term] <- 0
-    dataset[dataset[paste(geneCol, 'x', sep='_')]==GO.res[row, 'SYMBOL'], GO.term] <- 1
+    dataset[dataset[geneCol]==GO.res[row, 'SYMBOL'], GO.term] <- 1
   }
   return(dataset)
 }

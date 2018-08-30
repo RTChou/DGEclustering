@@ -18,9 +18,9 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     for file_path in file_paths:
         datasets.append(pd.read_table(file_path))
     keys = np.arange(len(datasets)).astype(str)
-    merged_set = pd.concat([x.set_index(gene_col) for x in datasets], axis=1, keys=keys)
+    merged_set = pd.concat([x.set_index(gene_col) for x in datasets], axis=1, keys=keys, join='inner', ignore_index=False)
     merged_set.columns = merged_set.columns.map('_'.join)
-
+    
     # create output filepath
     filename_1 = re.search(r".+\/(.+).tsv", file_paths[x_file_number]).group(1)
     filename_2 = re.search(r".+\/(.+).tsv", file_paths[y_file_number]).group(1)
@@ -145,13 +145,13 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         fig.savefig(out + '_sig_plot.png')
 
         if sig_discordant is not None and sig_discordant.shape[0] > 0:
-            sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=False)
+            sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=True)
 
         if sig_concordant is not None and sig_concordant.shape[0] > 0:
-            sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=False)
+            sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=True)
 
         if all_sig is not None and all_sig.shape[0] > 0:
-            all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=False)
+            all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=True)
     
     # plotting frame for cluster plot
     if for_cluster_plot == True:
