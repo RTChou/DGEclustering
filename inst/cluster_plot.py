@@ -55,7 +55,7 @@ def main():
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if args.MCA_result == 0:
-        ax = plotting.scatter_plot(file_paths=args.list, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+        ax = plotting.scatter_plot(file_paths=args.file_paths, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
     else:
         title = 'MCA plot'
         xtitle = 'Dim1'
@@ -107,7 +107,7 @@ def main():
         fig = plt.figure(figsize=(18, 18))
         ax = fig.add_subplot(111)
         if args.MCA_result == 0:
-            ax = plotting.scatter_plot(file_paths=args.list, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
+            ax = plotting.scatter_plot(file_paths=args.file_paths, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, adj_pvalue=args.adj_pvalue, for_cluster_plot=True)
         else:
             title = 'MCA plot'
             xtitle = 'Dim1'
