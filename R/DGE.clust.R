@@ -10,12 +10,17 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   # MCA = MCAsimple(integrated.matrix)[, 1:nb.dim.an]
   MCA = MCAsimple(integrated.matrix)[, 1:2]
 
-  if (clust.method != 'genclust'){
+  if (clust.method == 'ward'){
+    DIST <- dist(expressions, diag=TRUE, upper=TRUE)
+    groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
+  }
+  
+  else if (clust.method != 'ward' && clust.method != 'genclust'){ # set intego as default
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
 
-  else {
+  else{
     # input for gensclust does not need to be scaled (i.e. MCA is already scaled)
     # generate MCA input for Genclust (i.e. input is GO term-integrated)
     line1 <-
