@@ -175,7 +175,6 @@ def main():
         ax.legend((g1,), (g1_name,), markerscale=1)
         plt.savefig(args.out_dir + '/cluster_' + str(j + 1) + '.png')
 
-
 if __name__ == '__main__':
     main()
 
