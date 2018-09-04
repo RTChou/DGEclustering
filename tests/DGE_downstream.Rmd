@@ -22,6 +22,7 @@ library(DGEclustering)
 library(AnnotationHub)
 library(RSQLite)
 library(stringr)
+library(ggplot2)
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
 
@@ -33,6 +34,7 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
         FALSE)
 ```
 
+
 ## 2. Set the working directory, and specify the column name for gene IDs, 
 organism database, and key type
 ```{r}
@@ -42,32 +44,23 @@ org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
 key.type <- 'SYMBOL'
 ```
 
+
 ## 3. Set the (adjusted) p-value thresholds
 ```{r}
-x.threshold <- 0.01
-y.threshold <- 0.01
+x.threshold <- 0.9
+y.threshold <- 0.9
 adjPvalue <- TRUE
 ```
 
 
 ## 4. Automation of diagnostic plots
 ```{r}
-# generate scatter plots and corresponding files for significant genes
 automation(rootDir='./', geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
-```
 
-
-## (Opt.) Search for files in database
-```{r}
+# (optional) search for files in the database
 mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
 dbListTables(mydb)
-
-# many other SQLite functions...
-```
-
-
-## (Opt.) Remember to close and disconnect the database
-```{r}
+# remember to close and disconnect the database
 dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
@@ -75,24 +68,28 @@ unlink('rnaseq.db')
 
 ## 5. Specify the paths of input files
 ```{r}
-# the order of x.file and y.file matters
-x.file <- 'control.GDT.t2h.vs.control.GDT.t30.tsv'
-y.file <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
-cluster.out <- 'intego_result_time_series_1.tsv'
-plotting.out <- './qvalue_0.01_1'
-system(paste('mkdir', plotting.out)) # to make new plotting directory
+file1 <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
+file2 <- 'control.GDT.t2h.vs.control.GDT.t30.tsv'
+file3 <- 'control.GDT.t5h.vs.control.GDT.t2h.tsv'
+file.paths <- c(file1, file2, file3)
+cluster.out <- 'intego_time_series_multiple_0.9.tsv'
+plotting.dir <- './multiple_0.9'
+system(paste('mkdir', plotting.dir)) # to make a new plotting directory
 ```
 
+```{r}
+multidim.plot(file.paths, geneCol=gene.col, x.fileNumber=1, y.fileNumber=2, plotDir='./', datDir='./', outputName='test', x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue)
+```
 
 ## 6. Annotate Genes
 ```{r}
-dir <- 'paired_files' 
+dir <- './paired_files' 
 dis.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'disagreeing_genes.tsv', sep='_')
 con.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'agreeing_genes.tsv', sep='_')
-dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, sep='\t')
-con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, sep='\t')
+dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
 paired.dat <- rbind(dis.dat, con.dat)
-bg.genes <- read.table(x.file, header=TRUE, sep='\t')[gene.col]
+bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=FALSE)[gene.col]
 
 dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
@@ -105,14 +102,18 @@ number of group: choose the number of group for optimal clustering <br>
 
 ```{r}
 # expressions
-exp <- scale(dat[, c(2, 6, 8, 12)])
-rownames(exp) <- dat[, paste(gene.col, 'x', sep='_')]
+## padj
+exp <- scale(dat[, c(3, 7, 9, 13)])
+## pvalue
+exp <- scale(dat[, c(2, 5, 8, 11)])
+rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
 #annotaitons
-ann <- dat[, c(14:ncol(dat)), drop=FALSE]
-sum(apply(ann, 2, sum) >= 3)
-ann <- ann[, apply(ann, 2, sum) >= 3]
-rownames(ann) <- dat[, paste(gene.col, 'x', sep='_')]
+## less than 30
+ann <- dat[, c(20:ncol(dat)), drop=FALSE]
+sum(apply(ann, 2, sum) >= 2)
+ann <- ann[, apply(ann, 2, sum) >= 2]
+rownames(ann) <- make.names(dat[,gene.col], unique=TRUE)
 
 # number of groups
 nb.group=8
@@ -125,16 +126,22 @@ res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.gro
 
 # res$groups # code to view the clustering result
 write.table(stack(res$groups), cluster.out, sep='\t', row.names=FALSE)
+write.table(res$MCA, 'MCA.tsv', sep='\t', row.names=TRUE, col.names=NA)
 
 # visualize the clustering result
-cluster.plot(outDir=plotting.out, filePath1=x.file, filePath2=y.file, clusterFilePath=cluster.out, geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, sigData='ALL', color='brg')
+cluster.plot(outDir=plotting.dir, filePaths=file.paths, x.fileNumber=1, y.fileNumber=2, clusterFilePath=cluster.out, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+
+cluster.plot(outDir=plotting.dir, filePaths='MCA.tsv', MCA=TRUE, clusterFilePath=cluster.out, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
 ```
 
 
 ## 9. GO enrichment of the clustering result (plotting)
 ```{r}
-bg.genes <- read.table(x.file, header=TRUE, sep='\t')[gene.col]
+bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=TRUE)[gene.col]
 
-cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='BP', top=10)
+cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='CC', top=10)
+
+plot.path <- 'intego_0.01_2_CC.png'
+ggsave(paste(plotting.dir, plot.path, sep='/')) # to save the plot
 ```
 
