@@ -51,24 +51,6 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     log2FoldChange_x = str(x_file_number) + '_log2FoldChange'
     log2FoldChange_y = str(y_file_number) + '_log2FoldChange'
     
-    # prepare output significant dataset(s)
-    sig_discordant = None
-    sig_concordant = None
-    all_sig = None
-
-    if len(datasets) == 2:
-        sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
-                  ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
-        sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) |
-                  ((sig_vs_sig[log2FoldChange_x] <= 0) & (sig_vs_sig[log2FoldChange_y] <= 0))]
-
-    else: # the significant threshold will be x_threshold for multiple files
-        if adj_pvalue == True:
-            temp = pd.concat((sig_vs_sig['%i_padj'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
-        else:
-            temp = pd.concat((sig_vs_sig['%i_pvalue'%i] < x_threshold for i in np.arange(len(datasets))), axis=1).all(axis=1)
-        all_sig = sig_vs_sig[temp]
-
     # -- plotting section --
     xtitle = filename_1.replace('_', ' ').replace('.', ' ')
     ytitle = filename_2.replace('_', ' ').replace('.', ' ')
@@ -99,10 +81,8 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.axhline(y=0, linestyle='dotted', color='grey')
 
         title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
-        #TODO need modify!
         sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
                    ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
-
         anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
         anchored_text.patch.set(color='red', alpha=0.3)
 
@@ -115,12 +95,30 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     
     # significant scatter plot
     if return_sig_plot == True:
-        # set plotting parameters
+        # prepare output significant dataset(s) and set plotting parameters
         if len(datasets) == 2:
+            sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
+                      ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
+            sig_concordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] >= 0) & (sig_vs_sig[log2FoldChange_y] >=0)) | 
+                      ((sig_vs_sig[log2FoldChange_x] <= 0) & (sig_vs_sig[log2FoldChange_y] <= 0))]
+            if sig_discordant.shape[0] > 0:
+                sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=True)
+            if sig_concordant.shape[0] > 0:
+                sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=True)
+                
             title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
             anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
             anchored_text.patch.set(color='red', alpha=0.3)
-        else:
+
+        else: # the significant threshold for multiple files will be the smallest for all
+            if adj_pvalue == True:
+                temp = pd.concat((sig_vs_sig['%i_padj'%i] < min(x_threshold, y_threshold) for i in np.arange(len(datasets))), axis=1).all(axis=1)
+            else:
+                temp = pd.concat((sig_vs_sig['%i_pvalue'%i] < min(x_threshold, y_threshold) for i in np.arange(len(datasets))), axis=1).all(axis=1)
+            all_sig = sig_vs_sig[temp]
+            if all_sig.shape[0] > 0:
+                all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=True)
+            
             title = '(' + xtitle + ') vs (' + ytitle + ') (multi-dimensional)'
             anchored_text = None
 
@@ -135,30 +133,22 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         else:
             g1 = ax.scatter(all_sig[log2FoldChange_x], all_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
             ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1)    
+        
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.set_ylim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
+        
         ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
-        # TODO
         if len(datasets) == 2:
             ax.add_artist(anchored_text)
         
         fig.savefig(out + '_sig_plot.png')
 
-        if sig_discordant is not None and sig_discordant.shape[0] > 0:
-            sig_discordant.to_csv(out + '_disagreeing_genes.tsv', sep='\t', index=True)
-
-        if sig_concordant is not None and sig_concordant.shape[0] > 0:
-            sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=True)
-
-        if all_sig is not None and all_sig.shape[0] > 0:
-            all_sig.to_csv(out + '_all_sig_genes.tsv', sep='\t', index=True)
-    
     # plotting frame for cluster plot
     if for_cluster_plot == True:
         if len(datasets) == 2:
