@@ -145,7 +145,6 @@ def main():
                 ell = Ellipse(xy=[cx, cy], width=np.std(x) * 5, height=np.std(y) * 5,
                         angle=angle, ec='#7f7f7f', fc='grey', alpha=0.1)
                 ax.add_patch(ell)
-
         
         # plot the centroid for cluster j
         color = cmap[j]
