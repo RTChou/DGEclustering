@@ -18,3 +18,4 @@ cluster.plot <- function(outDir='./', filePaths, MCA=FALSE, x.fileNumber=1, y.fi
                '-a', python.boolean.convert(adjPvalue),
                '-c', color))
 }
+

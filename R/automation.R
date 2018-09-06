@@ -17,3 +17,4 @@ automation <- function(rootDir, geneCol, x.threshold=0.05, y.threshold=0.05, adj
                '-f', python.boolean.convert(fishPlot),
                '-s', python.boolean.convert(scatterPlot)))
 }
+

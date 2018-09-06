@@ -37,3 +37,4 @@ cluster.sim.plot <- function(method1.groups, method2.groups, OrgDb, keytype, ont
           axis.text=element_text(size=10, face='bold'),
           axis.text.x=element_text(angle=45, hjust=1))
 }
+

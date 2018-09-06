@@ -28,3 +28,4 @@ cluster.bar.plot <- function(method1.groups, method2.groups, method1.name='metho
           axis.text.x=element_text(angle=45, hjust=1, color='black'),
           axis.text.y=element_text(color='black'))
 }
+

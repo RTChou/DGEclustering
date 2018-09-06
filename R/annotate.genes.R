@@ -25,3 +25,4 @@ annotate.genes <- function(OrgDb, keyType, pairedDataset, geneCol, GOEnrichment=
   }
   return(dataset)
 }
+

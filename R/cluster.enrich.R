@@ -44,3 +44,4 @@ cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top
           axis.text.x=element_text(angle=45, hjust=1, size=10, face='bold'),
           axis.text.y=element_text(size=10, face='bold'))
 }
+

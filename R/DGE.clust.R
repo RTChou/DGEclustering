@@ -88,7 +88,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
     # run genclust
     system(
-      paste(paste(package.dir, 'genclust', sep='/'),
+      paste('genclust',
             paste(package.dir, 'genclust_sig_data.tsv', sep='/'),
             nb.group,
             nb.generation,
@@ -129,3 +129,4 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
   names(res) <- c('groups', 'integrated.matrix', 'MCA')
   return(res)
 }
+
