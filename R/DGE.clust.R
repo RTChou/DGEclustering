@@ -1,26 +1,26 @@
 #' @export
 #' @import InteGO
 #' @import rlist
-DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO = 4, LIM.COR = 0.5){
-  
-  if (is.null(annotations)){
-    DIST <- dist(expressions, diag=TRUE, upper=TRUE)
-    groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
+DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
+  nb.dim.ex <- ncol(expressions)
+  nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
+
+  if (!is.null(annotations)){
+    integrated.matrix <- Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
+    integrated.matrix <- apply(integrated.matrix, 2, as.factor)
+    # MCA <- MCAsimple(integrated.matrix)[, 1:nb.dim.an]
+    MCA <- MCAsimple(integrated.matrix)[, 1:2]
     res <- list(groups)
     names(res) <- c('groups')
     return(res)
   }
 
-  else{
-    nb.dim.ex = ncol(expressions)
-    nb.dim.an = min((nrow(annotations) - 1), (ncol(annotations) - 1))
-    integrated.matrix = Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
-    integrated.matrix <- apply(integrated.matrix, 2, as.factor)
-    # MCA = MCAsimple(integrated.matrix)[, 1:nb.dim.an]
-    MCA = MCAsimple(integrated.matrix)[, 1:2]
+  if (clust.method == 'ward'){
+    DIST <- dist(expressions, diag=TRUE, upper=TRUE)
+    groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
-
-  if (clust.method != 'genclust'){ # set intego as default
+  
+  else if (clust.method != 'ward' && clust.method != 'genclust'){ # set intego as default
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
@@ -93,7 +93,7 @@ DGE.clust <- function(expressions, annotations, clust.method='intego', nb.group,
 
     # run genclust
     system(
-      paste(paste(package.dir, 'genclust', sep='/'),
+      paste('genclust',
             paste(package.dir, 'genclust_sig_data.tsv', sep='/'),
             nb.group,
             nb.generation,
