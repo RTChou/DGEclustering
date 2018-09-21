@@ -1,5 +1,17 @@
+#' @title automated plotting of diagnostic plots
+#' @description From a starting directory, recursively search for DE output files and their corresponding R markdown files, 
+#'   store them in the SQLite database, then plot the diagnostic plots for the paired datasets
+#' @param rootDir path to the starting directory
+#' @param geneCol name of the column where the genes are stored in the datasets
+#' @param x.threshold (adj) p-value threshold of the first dataset
+#' @param y.threshold (adj) p-value threshold of the second dataset
+#' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
+#' @param qqPlot if TRUE, plot Q-Q plots
+#' @param fishPlot if TRUE, plot fish plots
+#' @param scatterPlot if TRUE, plot scatter plots
 #' @export
 automation <- function(rootDir, geneCol, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE){
+  
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
