@@ -1,7 +1,20 @@
+#' @title
+#' @description
+#' @param expressions gene expression dataset
+#' @param annotations GO term annotation dataset
+#' @param clust.methods one of 'intego', 'genclust', 'ward' (for clustering without annotations).
+#' @param nb.group number of clustering groups
+#' @param genclust.priori If TRUE, use intego result as a priori. Default is FALSE. 
+#' @param nb.generation number of generations for genclust
+#' @param LIM.ASSO
+#' @param LIM.COR
 #' @export
 #' @import InteGO
 #' @import rlist
-DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.group, genclust.priori=NULL, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
+#' @references \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-42}
+#' @return
+#' @examples  \dontrun{}
+DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.group, genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
   nb.dim.ex <- ncol(expressions)
   nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
 
@@ -64,7 +77,7 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.g
           filepath,
           append = FALSE,
           sep = '\n')
-    if (is.null(genclust.priori) || genclust.priori=='random'){
+    if (genclust.priori==FALSE){
         set.seed(123)
         ran <- split(seq(1, nrow(MCA)), sample(1:nb.group, nrow(MCA), replace = TRUE))
         for (i in 1:length(ran)) {
