@@ -1,3 +1,11 @@
+#' @title GO enrichment of clusters
+#' @description perform GO enrichment on cluster groups and plot the result as dot plot
+#' @param clusterGroups clustering result from DGE.clust
+#' @param OrgDb object returned by AnnotationHub.
+#' @param keyType type of genes. e.g. 'ENSEMBL', 'ENTREZID', 'SYMBOL'.
+#' @param BgGenes background genes for enrichment analysis
+#' @param ont ont One of 'ALL', 'BP', 'BF', or 'CC'.
+#' @param top number of top terms to show for each cluster
 #' @export
 #' @import clusterProfiler
 #' @import ggplot2
