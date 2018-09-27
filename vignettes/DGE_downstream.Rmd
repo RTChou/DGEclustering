@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo=TRUE)
 
 #### Note 1: installing DGEclustering package
 ```{r}
-setwd('~/Downloads')
+setwd('~/Downloads/dictyostelium_2')
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
 
@@ -72,8 +72,8 @@ file1 <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
 file2 <- 'control.GDT.t2h.vs.control.GDT.t30.tsv'
 file3 <- 'control.GDT.t5h.vs.control.GDT.t2h.tsv'
 file.paths <- c(file1, file2, file3)
-cluster.out <- 'intego_time_series_multiple_0.9.tsv'
-plotting.dir <- './multiple_0.9'
+cluster.out <- 'intego_time_series_padj_multiple_0.9.tsv'
+plotting.dir <- './padj_multiple_0.9'
 system(paste('mkdir', plotting.dir)) # to make a new plotting directory
 ```
 
@@ -83,15 +83,16 @@ multidim.plot(file.paths, geneCol=gene.col, x.fileNumber=1, y.fileNumber=2, plot
 
 ## 6. Annotate Genes
 ```{r}
-dir <- './paired_files' 
-dis.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'disagreeing_genes.tsv', sep='_')
-con.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'agreeing_genes.tsv', sep='_')
-dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-paired.dat <- rbind(dis.dat, con.dat)
-bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=FALSE)[gene.col]
+## For two paired datasets
+# dis.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'disagreeing_genes.tsv', sep='_')
+# con.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'agreeing_genes.tsv', sep='_')
+# dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+# con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
 
-dat <- annotate.genes(OrgDb=org.db, keyType=key.type, pairedDataset=paired.dat, geneCol=gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
+## For time course data
+dat <- read.table('test_all_sig_genes.tsv', header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=FALSE)[gene.col]
+ann <- annotate.genes(OrgDb=org.db, keyType=key.type, genes=dat$gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
 
@@ -102,21 +103,19 @@ number of group: choose the number of group for optimal clustering <br>
 
 ```{r}
 # expressions
-## padj
-exp <- scale(dat[, c(3, 7, 9, 13)])
-## pvalue
-exp <- scale(dat[, c(2, 5, 8, 11)])
+exp <- scale(dat[, c(3, 7, 9, 13, 15, 19)])
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
 #annotaitons
 ## less than 30
-ann <- dat[, c(20:ncol(dat)), drop=FALSE]
-sum(apply(ann, 2, sum) >= 2)
-ann <- ann[, apply(ann, 2, sum) >= 2]
+sum(apply(ann, 2, sum) >= 5)
+ann <- ann[, apply(ann, 2, sum) >= 5]
 rownames(ann) <- make.names(dat[,gene.col], unique=TRUE)
 
 # number of groups
 nb.group=8
+
+log.info <- data.frame(item=c('dimensions', ''))
 ```
 
 
