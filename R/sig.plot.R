@@ -1,12 +1,12 @@
 #' @export
-multidim.plot <- function(filePaths, geneCol, x.fileNumber=1, y.fileNumber=2, plotDir, datDir, outputName=NULL, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
+sig.plot <- function(filePaths, geneCol, x.fileNumber=1, y.fileNumber=2, plotDir, datDir, outputName=NULL, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
     else
       return('0')
   }
-  path <- paste(system.file(package='DGEclustering'), 'multidim_plot.py', sep='/')
+  path <- paste(system.file(package='DGEclustering'), 'sig_plot.py', sep='/')
   if (!is.null(outputName)) {
     system(paste(path,
                '-f', paste(filePaths, collapse=' '),
