@@ -13,7 +13,7 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   # export datasets to temp folder
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
-  filepaths <- file.path(temp.folder, names(datasets), '.tsv')
+  filepaths <- file.path(temp.folder, paste0(names(datasets), '.tsv'))
   for (i in 1:length(datasets)){ 
     write.table(datasets[i], file=filepaths[i], sep='\t', row.names=FALSE)
   }
