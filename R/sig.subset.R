@@ -26,5 +26,15 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
              '-x', x.threshold,
              '-y', y.threshold,
              '-y', python.boolean.convert(adjPvalue)))
+  # plot the scatter plot
+  img <- readPNG(file.path(tempFolder, 'temp_sig_plot.png'))
+  plot.new() 
+  rasterImage(pp,0,0,1,1)
+  if (length(datasets) == 2) {
+    dis <- read.table(file.path(tempFolder, 'ds1_vs_ds2_disagreeing_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
+    con <- read.table(file.path(tempFolder, 'ds1_vs_ds2_agreeing_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
+  } 
+  else {
+    dat <- read.table(file.path(tempFolder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
+  }
 }
-
