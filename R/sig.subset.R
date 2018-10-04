@@ -13,7 +13,7 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   # export datasets to temp folder
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
-  filepaths <- file.path(temp.folder, paste0('ds', seq(1,length(datasets)), '.tsv'))
+  filepaths <- file.path(temp.folder, names(datasets), '.tsv')
   for (i in 1:length(datasets)){ 
     write.table(datasets[i], file=filepaths[i], sep='\t', row.names=FALSE)
   }
@@ -40,9 +40,9 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   plot.new() 
   rasterImage(img,0,0,1,1)
   if (length(datasets) == 2) {
-    dis <- read.table(file.path(temp.folder, 'ds1_vs_ds2_disagreeing_genes.tsv'), header=TRUE, 
+    dis <- read.table(file.path(temp.folder, 'temp_disagreeing_genes.tsv'), header=TRUE, 
       check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-    con <- read.table(file.path(temp.folder, 'ds1_vs_ds2_agreeing_genes.tsv'), header=TRUE, 
+    con <- read.table(file.path(temp.folder, 'temp_agreeing_genes.tsv'), header=TRUE, 
       check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
     dat <- list(dis, con)
     names(dat) <- c('dis', 'con')
@@ -50,7 +50,7 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   } 
   else {
     dat <- read.table(file.path(temp.folder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, 
-      sep='\t', stringAsFactors=FALSE)
+      sep='\t', stringsAsFactors=FALSE)
     return(dat)
   }
 }
