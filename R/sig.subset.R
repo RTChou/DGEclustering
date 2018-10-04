@@ -1,3 +1,12 @@
+#' @title
+#' @description
+#' @param datasets
+#' @param geneCol the column name of gene IDs
+#' @param x.fileNumber
+#' @param y.fileNumber
+#' @param x.threshold (adj)p-value threshold of the first dataset
+#' @param y.threshold (adj)p-value threshold of the second dataset
+#' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
 #' @export
 #' @import png
 sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {

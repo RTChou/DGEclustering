@@ -2,7 +2,7 @@
 #' @description From a starting directory, recursively search for DE output files and their corresponding R markdown files, 
 #'   store them in the SQLite database, then plot the diagnostic plots for the paired datasets
 #' @param rootDir path to the starting directory
-#' @param geneCol name of the column where the genes are stored in the datasets
+#' @param geneCol the column name of gene IDs
 #' @param x.threshold (adj) p-value threshold of the first dataset
 #' @param y.threshold (adj) p-value threshold of the second dataset
 #' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
