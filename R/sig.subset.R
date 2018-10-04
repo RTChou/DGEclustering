@@ -40,10 +40,17 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   plot.new() 
   rasterImage(pp,0,0,1,1)
   if (length(datasets) == 2) {
-    dis <- read.table(file.path(tempFolder, 'ds1_vs_ds2_disagreeing_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
-    con <- read.table(file.path(tempFolder, 'ds1_vs_ds2_agreeing_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
+    dis <- read.table(file.path(tempFolder, 'ds1_vs_ds2_disagreeing_genes.tsv'), header=TRUE, 
+      check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+    con <- read.table(file.path(tempFolder, 'ds1_vs_ds2_agreeing_genes.tsv'), header=TRUE, 
+      check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+    dat <- list(dis, con)
+    names(dat) <- c('dis', 'con')
+    return(dat)
   } 
   else {
-    dat <- read.table(file.path(tempFolder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, sep='\t')
+    dat <- read.table(file.path(tempFolder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, 
+      sep='\t', stringAsFactors=FALSE)
+    return(dat)
   }
 }
