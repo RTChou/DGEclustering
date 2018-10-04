@@ -38,7 +38,7 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   # plot the scatter plot
   img <- readPNG(file.path(temp.folder, 'temp_sig_plot.png'))
   plot.new() 
-  rasterImage(pp,0,0,1,1)
+  rasterImage(img,0,0,1,1)
   if (length(datasets) == 2) {
     dis <- read.table(file.path(temp.folder, 'ds1_vs_ds2_disagreeing_genes.tsv'), header=TRUE, 
       check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
