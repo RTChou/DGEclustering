@@ -9,6 +9,8 @@
 #' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
 #' @export
 #' @import png
+#' @import grid
+#' @import ggplot2
 sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   # export datasets to temp folder
   temp.folder <- '/tmp/dgeclustering'
@@ -40,20 +42,23 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
              '-y', python.boolean.convert(adjPvalue)))
   # plot the scatter plot
   img <- readPNG(file.path(temp.folder, 'temp_sig_plot.png'))
-  plot.new() 
-  rasterImage(img,0,0,1,1)
+  g <- rasterGrob(img, interpolate=TRUE) 
+  p <- ggplot() +
+    annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
   if (length(datasets) == 2) {
     dis <- read.table(file.path(temp.folder, 'temp_disagreeing_genes.tsv'), header=TRUE, 
       check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
     con <- read.table(file.path(temp.folder, 'temp_agreeing_genes.tsv'), header=TRUE, 
       check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-    dat <- list(dis, con)
-    names(dat) <- c('dis', 'con')
-    return(dat)
+    res <- list(dis, con, p)
+    names(res) <- c('dis', 'con', 'p')
+    return(res)
   } 
   else {
     dat <- read.table(file.path(temp.folder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, 
       sep='\t', stringsAsFactors=FALSE)
-    return(dat)
+    res <- list(dat, p)
+    names(res) <- c('dat', 'p')
+    return(res)
   }
 }

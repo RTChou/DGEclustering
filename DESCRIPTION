@@ -18,5 +18,6 @@ Imports: clusterProfiler,
     reshape2,
     GOSemSim,
     GenomicFeatures,
-    png
+    png,
+    grid
 RoxygenNote: 6.1.0
