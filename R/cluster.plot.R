@@ -43,7 +43,7 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, x.dsNumber=1,
   path <- paste(system.file(package='DGEclustering'), 'cluster_plot.py', sep='/')
   system(paste(path,
                '-d', temp.folder,
-               '-f', paste(filePaths, collapse=' '),
+               '-f', paste(filepaths, collapse=' '),
                '-m', python.boolean.convert(MCA),
                '-n1', x.dsNumber - 1,
 	       '-n2', y.dsNumber - 1,
