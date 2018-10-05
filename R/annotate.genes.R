@@ -25,7 +25,7 @@ annotate.genes <- function(OrgDb, keyType, genes, GOEnrichment=FALSE, BgGenes=NU
   }
   else {
     # GO enrichment
-    GO.res <- enrichGO(gene=dataset, OrgDb=OrgDb, keyType=keyType, ont=ont, universe=unv.keys)
+    GO.res <- enrichGO(gene=ds.keys, OrgDb=OrgDb, keyType=keyType, ont=ont, universe=unv.keys)
   }
 
   # construct binary GO term matrix
@@ -35,9 +35,8 @@ annotate.genes <- function(OrgDb, keyType, genes, GOEnrichment=FALSE, BgGenes=NU
     GO.term <- GO.res[row, 'GO']
     if (!GO.term %in% colnames(ann))
       ann[GO.term] <- 0
-    ann[rownames(dataset)==GO.res[row, 'SYMBOL'], GO.term] <- 1
+    ann[rownames(ann)==GO.res[row, 'SYMBOL'], GO.term] <- 1
   }
   ann <- ann[,-1]
   return(ann)
 }
-
