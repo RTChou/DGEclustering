@@ -28,7 +28,7 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.gr
     return(res)
   }
 
-  else (clust.method == 'ward'){
+  else {
     DIST <- dist(expressions, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
