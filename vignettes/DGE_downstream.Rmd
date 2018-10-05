@@ -75,8 +75,6 @@ names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
 datasets <- list(treatment1.vs.control, treatment2.vs.control, treatment3.vs.control)
 
-plotting.dir <- './padj_multiple_0.9'
-system(paste('mkdir', plotting.dir)) # to make a new plotting directory
 ```
 
 ```{r}
@@ -106,7 +104,7 @@ number of group: choose the number of group for optimal clustering <br>
 
 ```{r}
 # expressions
-exp <- scale(dat[,grepl("log2FoldChange|padj", colnames(dat))])
+exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
 #annotaitons
