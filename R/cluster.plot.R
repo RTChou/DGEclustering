@@ -57,13 +57,13 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, x.dsNumber=1,
   g <- rasterGrob(img, interpolate=TRUE)
   p <- ggplot() +
     annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-  list.append(plot, p)
+  plot <- list.append(plot, p)
   for (i in (1:length(res.groups))) {
     img <- readPNG(file.path(temp.folder, paste0('cluster_', i, '.png')))
     g <- rasterGrob(img, interpolate=TRUE)
     p <- ggplot() +
       annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-    list.append(plot, p)
+    plot <- list.append(plot, p)
   }
   names(plot) <- c('p', paste0('p', seq(1, length(res.groups))))
   return(plot)
