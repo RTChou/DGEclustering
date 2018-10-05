@@ -12,7 +12,7 @@
 cluster.enrich <- function(clusterGroups, OrgDb, keyType, BgGenes, ont='BP', top=10){
   # GO enrichment
   universe <- sapply(BgGenes, as.character)
-  GO.cluster.res <- as.data.frame(compareCluster(clusterGroups, fun='enrichGO', OrgDb=org.db, keyType=keyType, ont=ont, universe=universe))
+  GO.cluster.res <- as.data.frame(compareCluster(clusterGroups, fun='enrichGO', OrgDb=OrgDb, keyType=keyType, ont=ont, universe=universe))
 
   # select top significant terms
   gene.numbers <- c()
