@@ -23,6 +23,7 @@ library(AnnotationHub)
 library(RSQLite)
 library(stringr)
 library(ggplot2)
+library(clusterProfiler)
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
 
@@ -38,17 +39,16 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 ## 2. Set the working directory, and specify the column name for gene IDs, 
 organism database, and key type
 ```{r}
-setwd('~/Downloads/dictyostelium_2/test')
-gene.col <- 'GENEID'
-org.db <- query(hub, 'Dictyostelium discoideum_AX4')[[1]]
-key.type <- 'SYMBOL'
+gene.col <- 'gene'
+orgdb <- query(hub, 'Drosophila melanogaster')[['AH57972']]
+keytype <- 'FLYBASE'
 ```
 
 
 ## 3. Set the (adjusted) p-value thresholds
 ```{r}
-x.threshold <- 0.9
-y.threshold <- 0.9
+x.threshold <- 0.05
+y.threshold <- 0.05
 adjPvalue <- TRUE
 ```
 
@@ -68,31 +68,34 @@ unlink('rnaseq.db')
 
 ## 5. Specify the paths of input files
 ```{r}
-file1 <- 'control.GDT.t30.vs.control.GDT.t0.tsv'
-file2 <- 'control.GDT.t2h.vs.control.GDT.t30.tsv'
-file3 <- 'control.GDT.t5h.vs.control.GDT.t2h.tsv'
-file.paths <- c(file1, file2, file3)
-cluster.out <- 'intego_time_series_padj_multiple_0.9.tsv'
+data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.control'))
+datasets <- list(treatment1.vs.control, treatment2.vs.control)
+names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
+
+
+datasets <- list(treatment1.vs.control, treatment2.vs.control, treatment3.vs.control)
+
 plotting.dir <- './padj_multiple_0.9'
 system(paste('mkdir', plotting.dir)) # to make a new plotting directory
 ```
 
 ```{r}
-multidim.plot(file.paths, geneCol=gene.col, x.fileNumber=1, y.fileNumber=2, plotDir='./', datDir='./', outputName='test', x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue)
+# generate sig plot and subsets
+sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue)
 ```
 
 ## 6. Annotate Genes
 ```{r}
+## sig plot
+sig.res$p
 ## For two paired datasets
-# dis.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'disagreeing_genes.tsv', sep='_')
-# con.file <- paste(str_match(x.file, '(.+).tsv')[,2], 'vs', str_match(y.file, '(.+).tsv')[,2], 'agreeing_genes.tsv', sep='_')
-# dis.dat <- read.table(paste(dir, dis.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-# con.dat <- read.table(paste(dir, con.file, sep='/'), header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-
-## For time course data
-dat <- read.table('test_all_sig_genes.tsv', header=TRUE, check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
-bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=FALSE)[gene.col]
-ann <- annotate.genes(OrgDb=org.db, keyType=key.type, genes=dat$gene.col, GOEnrichment=FALSE, BgGenes=bg.genes)
+if (length(sig.res) == 3) {
+  dat <- rbind(sig.res$dis, sig.res$con)
+} else { ## For time course data
+  dat <- sig.res$dat
+}
+bg.genes <- treatment1.vs.control[gene.col]
+ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]), GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
 
@@ -103,18 +106,18 @@ number of group: choose the number of group for optimal clustering <br>
 
 ```{r}
 # expressions
-exp <- scale(dat[, c(3, 7, 9, 13, 15, 19)])
+exp <- scale(dat[,grepl("log2FoldChange|padj", colnames(dat))])
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
 #annotaitons
 ## less than 30
 sum(apply(ann, 2, sum) >= 5)
-ann <- ann[, apply(ann, 2, sum) >= 5]
-rownames(ann) <- make.names(dat[,gene.col], unique=TRUE)
+ann <- ann[, apply(ann, 2, sum) >= 100]
 
 # number of groups
 nb.group=8
 
+# generate log file
 log.info <- data.frame(item=c('dimensions', ''))
 ```
 
@@ -123,14 +126,13 @@ log.info <- data.frame(item=c('dimensions', ''))
 ```{r}
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
 
-# res$groups # code to view the clustering result
-write.table(stack(res$groups), cluster.out, sep='\t', row.names=FALSE)
-write.table(res$MCA, 'MCA.tsv', sep='\t', row.names=TRUE, col.names=NA)
+# view clustering result
+res$groups # code to view the clustering result
 
 # visualize the clustering result
-cluster.plot(outDir=plotting.dir, filePaths=file.paths, x.fileNumber=1, y.fileNumber=2, clusterFilePath=cluster.out, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+test <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
 
-cluster.plot(outDir=plotting.dir, filePaths='MCA.tsv', MCA=TRUE, clusterFilePath=cluster.out, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
 ```
 
 
@@ -138,7 +140,7 @@ cluster.plot(outDir=plotting.dir, filePaths='MCA.tsv', MCA=TRUE, clusterFilePath
 ```{r}
 bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=TRUE)[gene.col]
 
-cluster.enrich(clusterGroups=res$groups, OrgDb=org.db, keyType=key.type, BgGenes=bg.genes, ont='CC', top=10)
+cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, ont='CC', top=10)
 
 plot.path <- 'intego_0.01_2_CC.png'
 ggsave(paste(plotting.dir, plot.path, sep='/')) # to save the plot
