@@ -2,8 +2,8 @@
 #' @description
 #' @param datasets
 #' @param geneCol the column name of gene IDs
-#' @param x.fileNumber
-#' @param y.fileNumber
+#' @param x.dsNumber
+#' @param y.dsNumber
 #' @param x.threshold (adj)p-value threshold of the first dataset
 #' @param y.threshold (adj)p-value threshold of the second dataset
 #' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
@@ -11,7 +11,7 @@
 #' @import png
 #' @import grid
 #' @import ggplot2
-sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
+sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   # export datasets to temp folder
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
@@ -32,8 +32,8 @@ sig.subset <- function(datasets, geneCol, x.fileNumber=1, y.fileNumber=2, x.thre
   system(paste(path,
              '-f', paste(filepaths, collapse=' '),
              '-g', geneCol,
-	     '-n1', x.fileNumber - 1,
-             '-n2', y.fileNumber - 1,
+	     '-n1', x.dsNumber - 1,
+             '-n2', y.dsNumber - 1,
              '-p', temp.folder,
              '-d', temp.folder,
              '-o', 'temp',
