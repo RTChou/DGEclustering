@@ -14,10 +14,10 @@
 #' @references \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-42}
 #' @return
 #' @examples  \dontrun{}
-DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.group, genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
+DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.group, genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
   nb.dim.ex <- ncol(expressions)
   nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
-
+  
   if (!is.null(annotations)){
     integrated.matrix <- Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
     integrated.matrix <- apply(integrated.matrix, 2, as.factor)
@@ -28,12 +28,12 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.g
     return(res)
   }
 
-  if (clust.method == 'ward'){
+  else (clust.method == 'ward'){
     DIST <- dist(expressions, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
   
-  else if (clust.method != 'ward' && clust.method != 'genclust'){ # set intego as default
+  if (clust.method != 'genclust'){ # set intego as default
     DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
   }
@@ -140,7 +140,7 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='intego', nb.g
       }
     }
     groups <- list.append(x, temp)
-    names(groups) = paste('Group', 1:g, sep = '.')
+    names(groups) <- paste('Group', 1:g, sep = '.')
   }
 
   res <- list(groups, integrated.matrix, MCA)
