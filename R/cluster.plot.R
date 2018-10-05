@@ -13,7 +13,7 @@
 #' @param color type of matplotlib colormap
 #' @export
 #' @examples  \dontrun{}
-cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
+cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
   if (MCA == FALSE) {
@@ -52,19 +52,24 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, x.dsNumber=1,
                '-a', python.boolean.convert(adjPvalue),
                '-c', color))
   # plotting
-  plot <- list()
-  img <- readPNG(file.path(temp.folder, 'cluster_all.png'))
-  g <- rasterGrob(img, interpolate=TRUE)
-  p <- ggplot() +
-    annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-  plot <- list.append(plot, p)
-  for (i in (1:length(res.groups))) {
-    img <- readPNG(file.path(temp.folder, paste0('cluster_', i, '.png')))
+  if (subPlots == FALSE){
+    img <- readPNG(file.path(temp.folder, 'cluster_all.png'))
     g <- rasterGrob(img, interpolate=TRUE)
     p <- ggplot() +
-      annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
-    plot <- list.append(plot, p)
+    annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+    return(p)
   }
-  names(plot) <- c('p', paste0('p', seq(1, length(res.groups))))
-  return(plot)
+  else {
+    plot <- list()
+    plot <- list.append(plot, p)
+    for (i in (1:length(res.groups))) {
+      img <- readPNG(file.path(temp.folder, paste0('cluster_', i, '.png')))
+      g <- rasterGrob(img, interpolate=TRUE)
+      p <- ggplot() +
+        annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
+      plot <- list.append(plot, p)
+    }
+    names(plot) <- c('p', paste0('p', seq(1, length(res.groups))))
+    return(plot)
+  }
 }
