@@ -86,11 +86,13 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
         anchored_text.patch.set(color='red', alpha=0.3)
 
-        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
-        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
-        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
+        ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
+        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
+        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
         ax.add_artist(anchored_text)
-        
+        ax.legend(fontsize=32)
+        ax.tick_params(labelsize=28)
+
         fig.savefig(out + '_scatter_plot.png')
     
     # significant scatter plot
@@ -141,11 +143,13 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
         
-        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
-        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
-        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
+        ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
+        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
+        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
         if len(datasets) == 2:
             ax.add_artist(anchored_text)
+        ax.legend(fontsize=32)
+        ax.tick_params(labelsize=28)
         
         fig.savefig(out + '_sig_plot.png')
 
@@ -165,10 +169,12 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
-        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
-        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=15)
-        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=15)
-        
+        ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
+        ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
+        ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
+        ax.legend(fontsize=32)
+        ax.tick_params(labelsize=28)
+
         return ax
 
 
@@ -200,9 +206,10 @@ def fish_plot(file_path_1, file_path_2, gene_col, output_dir):
     ax.set_ylim(-40, 40)
     ax.axvline(x=0, linestyle='dotted', color='grey')
     ax.axhline(y=0, linestyle='dotted', color='grey')
-    ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=16, y=1.02)
-    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=15)
-    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=15)
+    ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=36, y=1.02)
+    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=35)
+    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=35)
+    ax.tick_params(labelsize=28)
 
     fig.savefig(output_dir + '/' + filename_1 + '_vs_' + filename_2 + '_fish_plot.png')
 
@@ -249,9 +256,10 @@ def qq_plot(output_dir, file_path=None, dataset=None):
     else:
         filename = 'null'
         title = 'Null'
-    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=16, y=1.02)
-    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=15)
-    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=15)
+    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=36, y=1.02)
+    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=35)
+    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=35)
+    ax.tick_params(labelsize=28)
 
     fig.savefig(output_dir + '/' + filename + '_qq_plot.png')
 
