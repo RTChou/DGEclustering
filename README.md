@@ -9,7 +9,7 @@ DGEclustering performs two primary tasks:<br>
 <b>I.</b> Searching from a starting directory for differential gene expression datasets (DESeq2 outputs), and automatically generating diagnostic plots for paired DGE datasets, which includes: Q-Q plots, fish plots, and scatter plots.
 <p align="center"><img src="../assets/automation.png" width="700"></p>
    
-<b>II.</b> Conducting multidimensional clustering analysis integrated with GO terms for paired DGE datasets. The GO terms are intergrated using the InteGO package (Verbanck, M., Lê, S. & Pagès, J. A new unsupervised gene clustering algorithm based on the integration of biological knowledge into expression data. BMC Bioinformatics 14, 42 (2013).)
+<b>II.</b> Conducting multidimensional clustering analysis integrated with GO terms for paired (could be two or more) DGE datasets. The GO terms are intergrated using the InteGO package (Verbanck, M., Lê, S. & Pagès, J. A new unsupervised gene clustering algorithm based on the integration of biological knowledge into expression data. BMC Bioinformatics 14, 42 (2013).)
 <p align="center"><img src="../assets/clustering.png" width="650"></p>
 
 
@@ -90,6 +90,7 @@ adjPvalue <- TRUE
 data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.control'))
 
 # Create a list of datasets
+## in this example we cluster on only two paired datasets
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
