@@ -94,7 +94,8 @@ data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.con
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
-# Generate significant plot and significant subsets
+# Generate significant plot and merged significant subsets
+## 'x.dsNumber' and 'y.dsNumber' is for plotting purposes (x-axis and y-axis)
 sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.threshold=x.threshold, 
 y.threshold=y.threshold, adjPvalue=adjPvalue)
 
