@@ -51,10 +51,10 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 ```
 
 ### I. Automation of diagnostic plots: `automation`
-   This function will create plotting folders as well as a folder containing paired DGE datasets (merged): `qq_plots`, 
-   `fish_plots`, `scatter_plots`, and `paired_files`.
+   This function will create plotting folders as well as a folder containing paired DGE datasets (merged) in the starting 
+   directory: `qq_plots`, `fish_plots`, `scatter_plots`, and `paired_files`.
 ``` r
-# Specify where to store the result
+# Specify the starting directory
 dir <- './'
 
 # Automated plotting of diagnostic plots
