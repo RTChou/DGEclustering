@@ -104,8 +104,8 @@ sig.res$p
 
 ## show datasets
 ## for two paired datasets, there will be discordant and concordant datasets. Discordant dataset contains 
-a set of genes having different signs of log2 fold changes between the paired datasets, whereas concordant 
-dataset contains genes having same signs of log2 fold changes.
+## a set of genes having different signs of log2 fold changes between the paired datasets, whereas concordant 
+## dataset contains genes having same signs of log2 fold changes.
 if (length(sig.res) == 3) { ## for two paired datasets
   head(sig.res$dis)
   head(sig.res$con)
