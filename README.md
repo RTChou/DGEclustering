@@ -19,4 +19,25 @@ conda create -n r-dgeclustering --file DGEclustering/requirement.txt
 ``` r
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
+Alternatively, the user can install DGEclustering from bioconda, but it may not be the latest version:<br>
+conda install r-dgeclustering
 
+## Usage
+1. Automation of diagnostic plots: `automation`
+   This function will create plotting folders as well as a folder containing paired DGE datasets (merged): `qq_plots`, 
+   `fish_plots`, `scatter_plots`, and `paired_files` 
+``` r
+# Specify where to store the result
+dir <- './'
+
+# Automated plotting of diagnostic plots
+automation(rootDir=dir, geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE)
+
+# (optional) search for files in the database
+mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
+dbListTables(mydb)
+
+# remember to close and disconnect the database
+dbDisconnect(mydb)
+unlink('rnaseq.db')
+```
