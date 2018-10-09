@@ -187,7 +187,7 @@ ont='BP', top=10)
 p.GO
 ```
 
-### III. Session information
+### Session Information
 ``` r
 sessionInfo()
 ```
