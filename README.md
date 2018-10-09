@@ -14,9 +14,10 @@ DGEclustering performs two primary tasks:<br>
 
 
 ## Installation
-1. Create conda environment:
+1. Create and activate conda environment:
 ``` bash
 conda create -n r-dgeclustering --file DGEclustering/requirement.txt
+source activate r-dgeclustering
 ```
 
 2. Install package in R:
