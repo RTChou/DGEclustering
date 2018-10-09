@@ -203,10 +203,10 @@ def fish_plot(file_path_1, file_path_2, gene_col, output_dir):
     ax.set_ylim(-40, 40)
     ax.axvline(x=0, linestyle='dotted', color='grey')
     ax.axhline(y=0, linestyle='dotted', color='grey')
-    ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=36, y=1.02)
-    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=35)
-    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=35)
-    ax.tick_params(labelsize=22)
+    ax.set_title('(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=26, y=1.02)
+    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=25)
+    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=25)
+    ax.tick_params(labelsize=12)
 
     fig.savefig(output_dir + '/' + filename_1 + '_vs_' + filename_2 + '_fish_plot.png')
 
@@ -253,10 +253,10 @@ def qq_plot(output_dir, file_path=None, dataset=None):
     else:
         filename = 'null'
         title = 'Null'
-    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=36, y=1.02)
-    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=35)
-    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=35)
-    ax.tick_params(labelsize=22)
+    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=26, y=1.02)
+    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=25)
+    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=25)
+    ax.tick_params(labelsize=12)
 
     fig.savefig(output_dir + '/' + filename + '_qq_plot.png')
 
