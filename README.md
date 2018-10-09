@@ -51,15 +51,17 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 ```
 
 ### I. Automation of diagnostic plots: `automation`
-   This function will create plotting folders as well as a folder containing paired DGE datasets (merged) in the starting 
-   directory: `qq_plots`, `fish_plots`, `scatter_plots`, and `paired_files`.
+   This function will create plotting folders for the three types of diagnostic plots in the starting directory: `qq_plots`, 
+   `fish_plots`, `scatter_plots`, and `paired_files`.
 ``` r
+# Specify the column name for gene IDs in DGE datasets
+gene.col <- 'gene'
+
 # Specify the starting directory
 dir <- './'
 
 # Automated plotting of diagnostic plots
-automation(rootDir=dir, geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, 
-adjPvalue=adjPvalue, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE)
+automation(rootDir=dir, geneCol=gene.col, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE)
 
 # (optional) search for files in the database
 mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
@@ -71,7 +73,7 @@ unlink('rnaseq.db')
 ```
 
 ### II. Multidimensional clustering integrated with GO terms
-#### Step 0-1: Specify the column name for gene IDs (for DGE datasets), organism database, and key type
+#### Step 0-1: Specify the column name for gene IDs, organism database, and key type
 ``` r
 gene.col <- 'gene'
 orgdb <- query(hub, 'Drosophila melanogaster')[['AH57972']]
