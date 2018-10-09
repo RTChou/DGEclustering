@@ -83,7 +83,7 @@ y.threshold <- 0.05
 adjPvalue <- TRUE
 ```
 
-#### Step 3: Specify the input files and subset significant genes
+#### Step 3: Specify the input files and subset significant genes `sig.subset`
 ``` r
 # Import example datasets
 data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.control'))
@@ -107,7 +107,7 @@ if (length(sig.res) == 3) {
 }
 ```
 
-#### Step 4: Annotate Genes
+#### Step 4: Annotate Genes `annotate.genes`
 ``` r
 ## For two paired datasets
 if (length(sig.res) == 3) {
@@ -141,7 +141,7 @@ ann <- ann[, apply(ann, 2, sum) >= 100]
 nb.group=8
 ```
 
-#### Step 6: Cluster genes, and visualize the result
+#### Step 6: Cluster genes, and visualize the result `DGE.clust`, `cluster.plot`
 ``` r
 # Clustering analysis
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
@@ -158,10 +158,10 @@ p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=
 p.MCA
 ```
 
-#### Step 7: GO enrichment of the clustering result (visualization)
+#### Step 7: GO enrichment of the clustering result (visualization) `cluster.enrich`
 ``` r
 # Background genes for GO enrichment
-bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=TRUE)[gene.col]
+bg.genes <- treatment1.vs.control[gene.col]
 
 # visualizing GO enrichment result
 p.GO <- cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, ont='BP', top=10)
