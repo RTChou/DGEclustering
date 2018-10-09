@@ -9,14 +9,13 @@ output: html_document
 knitr::opts_chunk$set(echo=TRUE)
 ```
 
-#### Note 1: installing DGEclustering package
+#### Note: Installing DGEclustering package
 ```{r}
-setwd('~/Downloads/dictyostelium_2')
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
 
 
-## 1. Import libraries and AnnotationHub
+## Step 1: Import libraries and AnnotationHub
 ```{r}
 library(DGEclustering)
 library(AnnotationHub)
@@ -36,8 +35,7 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 ```
 
 
-## 2. Set the working directory, and specify the column name for gene IDs, 
-organism database, and key type
+## Step 2: Specify the column name for gene IDs, organism database, and key type
 ```{r}
 gene.col <- 'gene'
 orgdb <- query(hub, 'Drosophila melanogaster')[['AH57972']]
@@ -45,7 +43,7 @@ keytype <- 'FLYBASE'
 ```
 
 
-## 3. Set the (adjusted) p-value thresholds
+## Step 3: Set the (adjusted) p-value thresholds
 ```{r}
 x.threshold <- 0.05
 y.threshold <- 0.05
@@ -53,94 +51,101 @@ adjPvalue <- TRUE
 ```
 
 
-## 4. Automation of diagnostic plots
+## Step 4: Specify the input files and subset significant genes
 ```{r}
-automation(rootDir='./', geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, qqPlot=FALSE, fishPlot=FALSE, scatterPlot=TRUE)
-
-# (optional) search for files in the database
-mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
-dbListTables(mydb)
-# remember to close and disconnect the database
-dbDisconnect(mydb)
-unlink('rnaseq.db')
-```
-
-
-## 5. Specify the paths of input files
-```{r}
+# Import example datasets
 data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.control'))
+
+# Create a list of datasets
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
-
-datasets <- list(treatment1.vs.control, treatment2.vs.control, treatment3.vs.control)
-
-```
-
-```{r}
-# generate sig plot and subsets
+# Generate significant plot and significant subsets
 sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue)
+
+# show Plot
+sig.res$p
 ```
 
-## 6. Annotate Genes
+
+## Step 5: Annotate Genes
 ```{r}
-## sig plot
-sig.res$p
 ## For two paired datasets
 if (length(sig.res) == 3) {
   dat <- rbind(sig.res$dis, sig.res$con)
 } else { ## For time course data
   dat <- sig.res$dat
 }
+
+## Background genes for GO enrichment
 bg.genes <- treatment1.vs.control[gene.col]
+
+## Annotate genes
 ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]), GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
 
-## 7. Prepare expression and annotation datasets for clustering
+## Step 6: Prepare expression and annotation datasets for clustering
 expressions: choose the desired dimensions <br> 
 annotations: choose the number of GO terms for optimal clustering <br> 
 number of group: choose the number of group for optimal clustering <br> 
-
 ```{r}
 # expressions
 exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
-#annotaitons
-## less than 30
+# annotaitons
+## less than 30 GO terms
 sum(apply(ann, 2, sum) >= 5)
 ann <- ann[, apply(ann, 2, sum) >= 100]
 
 # number of groups
 nb.group=8
-
-# generate log file
-log.info <- data.frame(item=c('dimensions', ''))
 ```
 
 
-## 8. Cluster genes, export the result, and visualize the clustering result
+## Step 7: Cluster genes, and visualize the result
 ```{r}
+# Clustering analysis
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
 
 # view clustering result
-res$groups # code to view the clustering result
+res$groups
 
 # visualize the clustering result
-test <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+p
 
-cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+# visualize the clustering result (MCA plot)
+p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, adjPvalue=adjPvalue, color='brg')
+p.MCA
 ```
 
 
-## 9. GO enrichment of the clustering result (plotting)
+## Step 8: GO enrichment of the clustering result (visualization)
 ```{r}
+# Background genes for GO enrichment
 bg.genes <- read.table(file1, header=TRUE, sep='\t', stringsAsFactors=TRUE)[gene.col]
 
-cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, ont='CC', top=10)
-
-plot.path <- 'intego_0.01_2_CC.png'
-ggsave(paste(plotting.dir, plot.path, sep='/')) # to save the plot
+# visualizing GO enrichment result
+p.GO <- cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, ont='BP', top=10)
+p.GO
 ```
 
+
+## Automation of diagnostic plots
+```{r}
+# Specify where to store the result
+dir <- './'
+
+# Automated plotting of diagnostic plots
+automation(rootDir=dir, geneCol=gene.col, x.threshold=x.threshold, y.threshold=y.threshold, adjPvalue=adjPvalue, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE)
+
+# (optional) search for files in the database
+mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
+dbListTables(mydb)
+
+# remember to close and disconnect the database
+dbDisconnect(mydb)
+unlink('rnaseq.db')
+```
