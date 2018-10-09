@@ -111,17 +111,17 @@ if (length(sig.res) == 3) {
 
 #### Step 4: Annotate Genes: `annotate.genes`
 ``` r
-## For two paired datasets
-if (length(sig.res) == 3) {
+# Assign the dat variable
+if (length(sig.res) == 3) { ## For two paired datasets
   dat <- rbind(sig.res$dis, sig.res$con)
 } else { ## For time course data
   dat <- sig.res$dat
 }
 
-## Background genes for GO enrichment
+# Background genes for GO enrichment
 bg.genes <- treatment1.vs.control[gene.col]
 
-## Annotate genes
+# Annotate genes
 ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]), 
 GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
@@ -150,26 +150,18 @@ nb.group=8
 ``` r
 # Clustering analysis
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
-
-# view clustering result
-res$groups
-
-# view vignette
-res$vignette
+res$groups ## view clustering result
+res$vignette ## view vignette
 
 # visualize the clustering result
 p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, 
 adjPvalue=adjPvalue, color='brg')
-
-# show plot
-p
+p ## show plot
 
 # visualize the clustering result (MCA plot)
 p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, 
 adjPvalue=adjPvalue, color='brg')
-
-# show plot
-p.MCA
+p.MCA ## show plot
 ```
 
 #### Step 7: GO enrichment of the clustering result (visualization): `cluster.enrich`
