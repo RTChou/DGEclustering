@@ -23,9 +23,28 @@ Alternatively, the user can install DGEclustering from bioconda, but it may not 
 conda install r-dgeclustering
 
 ## Usage
+Import libraries:
+``` r
+library(DGEclustering)
+library(AnnotationHub)
+library(RSQLite)
+library(stringr)
+library(ggplot2)
+library(clusterProfiler)
+hub <- AnnotationHub::.Hub("AnnotationHub",
+        getAnnotationHubOption("URL"),
+
+        # Cache location is specific to this instance of lcdb-wf so we don't
+        # clobber old runs with new annotation data
+        './AnnotationHubCache',
+
+        httr::use_proxy(Sys.getenv("http_proxy")),
+        FALSE)
+```
+
 1. Automation of diagnostic plots: `automation`
    This function will create plotting folders as well as a folder containing paired DGE datasets (merged): `qq_plots`, 
-   `fish_plots`, `scatter_plots`, and `paired_files` 
+   `fish_plots`, `scatter_plots`, and `paired_files`.
 ``` r
 # Specify where to store the result
 dir <- './'
