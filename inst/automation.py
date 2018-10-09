@@ -134,6 +134,8 @@ def main():
         conn.close()
         """
 
+        print(paired_file['file_1'])
+        print(paired_file['file_2'])
         # emit plots and diagnostics
         if args.qq_plot == 1:
             plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', file_path=paired_file['file_1'])

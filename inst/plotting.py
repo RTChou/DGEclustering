@@ -90,7 +90,6 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
         ax.add_artist(anchored_text)
-        ax.legend(fontsize=18)
         ax.tick_params(labelsize=22)
 
         fig.savefig(out + '_scatter_plot.png')
@@ -171,7 +170,6 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
-        ax.legend(fontsize=18)
         ax.tick_params(labelsize=22)
 
         return ax
