@@ -31,8 +31,8 @@ def main():
         os.system('mkdir -p ' + args.root_dir + '/fish_plots')
         os.system('rm -f ' + args.root_dir + '/fish_plots/*')
     if args.scatter_plot == 1:
-        os.system('mkdir -p ' + args.root_dir + '/scatter_plots ' + args.root_dir + '/paired_files')
-        os.system('rm -f ' + args.root_dir + '/scatter_plots/* ' + args.root_dir + '/paired_files/*')
+        os.system('mkdir -p ' + args.root_dir + '/scatter_plots')
+        os.system('rm -f ' + args.root_dir + '/scatter_plots/*')
 
     # recursively search for candidate tsv and Rmd files
     os.system('find ' + args.root_dir + ' -name "rnaseq*.Rmd" > rmd_filepaths')
@@ -142,7 +142,7 @@ def main():
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], gene_col=args.gene_col, output_dir=args.root_dir+'/fish_plots')
         if args.scatter_plot == 1:
             file_paths = [paired_file['file_1'], paired_file['file_2']]
-            temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, plot_out_dir=args.root_dir+'/scatter_plots', dat_out_dir=args.root_dir+'/paired_files', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
+            temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, plot_out_dir=args.root_dir+'/scatter_plots', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
 
     # generate null Q-Q plot
     if args.qq_plot == 1:

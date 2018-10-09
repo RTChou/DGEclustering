@@ -55,7 +55,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     xtitle = filename_1.replace('_', ' ').replace('.', ' ')
     ytitle = filename_2.replace('_', ' ').replace('.', ' ')
 
-    # general scatter plot (data for the two specified files only)
+    # general scatter plot (for the two specified files only)
     fig = plt.figure(figsize=(18, 18))
     ax = fig.add_subplot(111)
     if for_cluster_plot == False:
@@ -90,8 +90,8 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
         ax.add_artist(anchored_text)
-        ax.legend(fontsize=32)
-        ax.tick_params(labelsize=28)
+        ax.legend(fontsize=18)
+        ax.tick_params(labelsize=22)
 
         fig.savefig(out + '_scatter_plot.png')
     
@@ -148,8 +148,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
         if len(datasets) == 2:
             ax.add_artist(anchored_text)
-        ax.legend(fontsize=32)
-        ax.tick_params(labelsize=28)
+        ax.tick_params(labelsize=22)
         
         fig.savefig(out + '_sig_plot.png')
 
@@ -172,8 +171,8 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
         ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
         ax.set_xlabel(xtitle + u' log\u2082 fold change', fontsize=35)
         ax.set_ylabel(ytitle + u' log\u2082 fold change', fontsize=35)
-        ax.legend(fontsize=32)
-        ax.tick_params(labelsize=28)
+        ax.legend(fontsize=18)
+        ax.tick_params(labelsize=22)
 
         return ax
 
@@ -209,7 +208,7 @@ def fish_plot(file_path_1, file_path_2, gene_col, output_dir):
     ax.set_title('(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=36, y=1.02)
     ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=35)
     ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=35)
-    ax.tick_params(labelsize=28)
+    ax.tick_params(labelsize=22)
 
     fig.savefig(output_dir + '/' + filename_1 + '_vs_' + filename_2 + '_fish_plot.png')
 
@@ -259,7 +258,7 @@ def qq_plot(output_dir, file_path=None, dataset=None):
     ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=36, y=1.02)
     ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=35)
     ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=35)
-    ax.tick_params(labelsize=28)
+    ax.tick_params(labelsize=22)
 
     fig.savefig(output_dir + '/' + filename + '_qq_plot.png')
 
