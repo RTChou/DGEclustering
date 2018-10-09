@@ -133,6 +133,11 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.gr
       groups <- list.append(x, temp)
       names(groups) <- paste('Group', 1:g, sep = '.')
     }
+    # create log
+    vignette <- strsplit(
+            paste(paste('## Expressions input:', dim(expressions)[2], 'cols.', paste(colnames(expressions), collapse=' ')),
+                  paste('## Annotations input:', dim(annotations)[2], 'cols.', paste(colnames(annotations), collapse=' ')),
+                  paste('## Number of groups:', nb.group), sep='\n'), '\n')
   }
 
   else {
@@ -140,9 +145,13 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.gr
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     integrated.matrix <- NULL
     MCA <- NULL
+    # create log
+    vignette <- strsplit(
+            paste(paste('## Annotations input:', dim(annotations)[2], 'cols.', paste(colnames(annotations), collapse=' ')),
+                  paste('## Number of groups:', nb.group), sep='\n'), '\n')
   }
   
-  res <- list(groups, integrated.matrix, MCA)
-  names(res) <- c('groups', 'integrated.matrix', 'MCA')
+  res <- list(groups, integrated.matrix, MCA, vignette)
+  names(res) <- c('groups', 'integrated.matrix', 'MCA', 'vignette')
   return(res)
 }
