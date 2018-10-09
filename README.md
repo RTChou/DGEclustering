@@ -54,10 +54,8 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
    This function will create plotting folders for the three types of diagnostic plots in the starting directory: `qq_plots`, 
    `fish_plots`, `scatter_plots`, and `paired_files`.
 ``` r
-# Specify the column name for gene IDs in DGE datasets
+# Specify the column name for gene IDs in DGE datasets as well as the starting directory
 gene.col <- 'gene'
-
-# Specify the starting directory
 dir <- './'
 
 # Automated plotting of diagnostic plots
@@ -71,6 +69,11 @@ dbListTables(mydb)
 dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
+##### Trouble shooting:
+1. If automation failed, there may be some tsv files that are similar to a DGE dataset but miss some columns. In that case, 
+   please look for the error message "KeyError" and find out the missing column(s). 
+2. If automation does not work for all the DGE datasets, please be sure that the column name for gene IDs are exactly the same in 
+   each dataset.
 
 ### II. Multidimensional clustering integrated with GO terms
 #### Step 0-1: Specify the column name for gene IDs, organism database, and key type
