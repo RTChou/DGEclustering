@@ -136,8 +136,10 @@ exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
 # annotaitons
-## less than 30 GO terms
-sum(apply(ann, 2, sum) >= 5)
+## calculate number of GO terms assign to a specific number of genes
+sum(apply(ann, 2, sum) >= 100)
+
+## choose the appropriate number of GO terms for annotation dataset
 ann <- ann[, apply(ann, 2, sum) >= 100]
 
 # number of groups
