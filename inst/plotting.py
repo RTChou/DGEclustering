@@ -8,7 +8,7 @@ from matplotlib.offsetbox import AnchoredText
 from scipy.stats.mstats import mquantiles
 from scipy.stats import beta
 
-def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_out_dir='./', dat_out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False, out_file_name=None):
+def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir='./', x_threshold=0.05, y_threshold=0.05, adj_pvalue=True, for_cluster_plot=False, return_sig_plot=False, out_file_name=None):
     # check input file names for regex search
     for index, file_path in enumerate(file_paths):
         if re.search(r".+\/(.+).tsv", file_path) == None:
@@ -25,9 +25,9 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     filename_1 = re.search(r".+\/(.+).tsv", file_paths[x_file_number]).group(1)
     filename_2 = re.search(r".+\/(.+).tsv", file_paths[y_file_number]).group(1)
     if out_file_name == None:
-        out = dat_out_dir + '/' + filename_1 + '_vs_' + filename_2
+        out = out_dir + '/' + filename_1 + '_vs_' + filename_2
     else:
-        out = dat_out_dir + '/' + out_file_name
+        out = out_dir + '/' + out_file_name
 
     # create subsets
     if adj_pvalue == True:

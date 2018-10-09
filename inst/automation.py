@@ -134,8 +134,6 @@ def main():
         conn.close()
         """
 
-        print(paired_file['file_1'])
-        print(paired_file['file_2'])
         # emit plots and diagnostics
         if args.qq_plot == 1:
             plotting.qq_plot(output_dir=args.root_dir+'/qq_plots', file_path=paired_file['file_1'])
@@ -144,7 +142,7 @@ def main():
             plotting.fish_plot(paired_file['file_1'], paired_file['file_2'], gene_col=args.gene_col, output_dir=args.root_dir+'/fish_plots')
         if args.scatter_plot == 1:
             file_paths = [paired_file['file_1'], paired_file['file_2']]
-            temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, plot_out_dir=args.root_dir+'/scatter_plots', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
+            temp = plotting.scatter_plot(file_paths, gene_col=args.gene_col, out_dir=args.root_dir+'/scatter_plots', x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue)
 
     # generate null Q-Q plot
     if args.qq_plot == 1:
