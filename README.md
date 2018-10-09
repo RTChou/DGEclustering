@@ -97,6 +97,14 @@ sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.
 
 # show Plot
 sig.res$p
+
+# show datasets
+if (length(sig.res) == 3) {
+  head(sig.res$dis)
+  head(sig.res$con)
+} else { ## For time course data
+  head(sig.res$dat)
+}
 ```
 
 #### Step 4: Annotate Genes
