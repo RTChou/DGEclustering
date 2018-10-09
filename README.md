@@ -69,7 +69,7 @@ dbListTables(mydb)
 dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
-##### Trouble shooting:
+##### Troubleshooting:
 1. If automation failed, there may be some tsv files that are similar to a DGE dataset but miss some columns. In that case, 
    please look for the error message "KeyError" and find out the missing column(s). 
 2. If automation does not work for all the DGE datasets, please be sure that the column name for gene IDs are exactly the same in 
