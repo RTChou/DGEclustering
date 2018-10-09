@@ -10,3 +10,4 @@ r-rlist
 r-reshape2
 bioconductor-gosemsim
 bioconductor-genomicfeatures
+r-png
