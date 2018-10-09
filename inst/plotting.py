@@ -25,7 +25,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, plot_ou
     filename_1 = re.search(r".+\/(.+).tsv", file_paths[x_file_number]).group(1)
     filename_2 = re.search(r".+\/(.+).tsv", file_paths[y_file_number]).group(1)
     if out_file_name == None:
-        out = dat_out_dir + '/' + filename_1 + 'vs' + filename_2
+        out = dat_out_dir + '/' + filename_1 + '_vs_' + filename_2
     else:
         out = dat_out_dir + '/' + out_file_name
 
