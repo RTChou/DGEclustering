@@ -116,7 +116,7 @@ if (length(sig.res) == 3) {
 # Assign the dat variable
 if (length(sig.res) == 3) { ## For two paired datasets
   dat <- rbind(sig.res$dis, sig.res$con)
-} else { ## For time course data
+} else { ## For more paired datasets
   dat <- sig.res$dat
 }
 
@@ -133,18 +133,17 @@ expressions: choose the desired dimensions <br>
 annotations: choose the number of GO terms for optimal clustering <br> 
 number of group: choose the number of group for optimal clustering <br> 
 ``` r
-# expressions
+# expression dataset
 exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
-# annotaitons
+# annotaiton dataset
 ## calculate number of GO terms assign to a specific number of genes
 sum(apply(ann, 2, sum) >= 100)
-
 ## choose the appropriate number of GO terms for annotation dataset
 ann <- ann[, apply(ann, 2, sum) >= 100]
 
-# number of groups
+# choose the number of clustering groups
 nb.group=8
 ```
 
