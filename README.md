@@ -94,7 +94,7 @@ data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.con
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
-# Generate significant plot and merged significant subsets
+# Generate significant scatter plot and merged significant subsets
 ## 'x.dsNumber' and 'y.dsNumber' is for plotting purposes (x- and y-axis)
 sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.threshold=x.threshold, 
 y.threshold=y.threshold, adjPvalue=adjPvalue)
@@ -103,10 +103,11 @@ y.threshold=y.threshold, adjPvalue=adjPvalue)
 sig.res$p
 
 ## show datasets
-if (length(sig.res) == 3) {
+## for two paired datasets, there will be discordant and concordant datasets. Discordant dataset contains a set of genes having different signs of log2 fold changes between the paired datasets, whereas concordant dataset contains same signs of log2 fold changes.
+if (length(sig.res) == 3) { ## for two paired datasets
   head(sig.res$dis)
   head(sig.res$con)
-} else { ## For time course data
+} else { ## For more paired datasets
   head(sig.res$dat)
 }
 ```
