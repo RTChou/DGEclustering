@@ -95,7 +95,7 @@ y.threshold <- 0.05
 adjPvalue <- TRUE
 ```
 
-### Step 1-2: Merge datasets and subset the significant genes: `sig.subset`
+#### Step 1-2: Merge datasets and subset the significant genes: `sig.subset`
 This function Generates significant scatter plot as well as merged significant subsets
 ``` r
 ## 'x.dsNumber' and 'y.dsNumber' is for plotting purposes (x- and y-axis)
@@ -187,7 +187,7 @@ ont='BP', top=10)
 p.GO
 ```
 
-### Session information
+### III. Session information
 ``` r
 sessionInfo()
 ```
