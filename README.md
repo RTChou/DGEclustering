@@ -70,21 +70,14 @@ unlink('rnaseq.db')
 ```
 
 ### II. Multidimensional clustering integrated with GO terms
-#### Step 1: Specify the column name for gene IDs, organism database, and key type
+#### Step 0-1: Specify the column name for gene IDs (for DGE datasets), organism database, and key type
 ``` r
 gene.col <- 'gene'
 orgdb <- query(hub, 'Drosophila melanogaster')[['AH57972']]
 keytype <- 'FLYBASE'
 ```
 
-#### Step 2: Set the (adjusted) p-value thresholds
-``` r
-x.threshold <- 0.05
-y.threshold <- 0.05
-adjPvalue <- TRUE
-```
-
-#### Step 3: Specify the input files and subset significant genes: `sig.subset`
+#### Step 0-2: Specify the paired input files 
 ``` r
 # Import example datasets
 data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.control'))
@@ -93,8 +86,18 @@ data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.con
 ## in this example we cluster on only two paired datasets
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
+```
 
-# Generate significant scatter plot and merged significant subsets
+#### Step 1-1: Set the (adjusted) p-value thresholds for selecting genes
+``` r
+x.threshold <- 0.05
+y.threshold <- 0.05
+adjPvalue <- TRUE
+```
+
+### Step 1-2: Merge datasets and subset the significant genes: `sig.subset`
+This function Generates significant scatter plot as well as merged significant subsets
+``` r
 ## 'x.dsNumber' and 'y.dsNumber' is for plotting purposes (x- and y-axis)
 sig.res <- sig.subset(datasets, geneCol=gene.col, x.dsNumber=1, y.dsNumber=2, x.threshold=x.threshold, 
 y.threshold=y.threshold, adjPvalue=adjPvalue)
@@ -104,8 +107,8 @@ sig.res$p
 
 ## show datasets
 ## for two paired datasets, there will be discordant and concordant datasets. Discordant dataset contains 
-## a set of genes having different signs of log2 fold changes between the paired datasets, whereas concordant 
-## dataset contains genes having same signs of log2 fold changes.
+## a set of genes having different signs of log2 fold changes between the paired datasets, whereas 
+## concordant dataset contains genes having same signs of log2 fold changes.
 if (length(sig.res) == 3) { ## for two paired datasets
   head(sig.res$dis)
   head(sig.res$con)
@@ -114,12 +117,12 @@ if (length(sig.res) == 3) { ## for two paired datasets
 }
 ```
 
-#### Step 4: Annotate Genes: `annotate.genes`
+#### Step 2: Annotate Genes: `annotate.genes`
 ``` r
-# Assign the dat variable
-if (length(sig.res) == 3) { ## For two paired datasets
+# Assign the `dat` variable
+if (length(sig.res) == 3) { ## for two paired datasets we can combine the discordant and condordant datasets
   dat <- rbind(sig.res$dis, sig.res$con)
-} else { ## For more paired datasets
+} else { ## for more paired datasets
   dat <- sig.res$dat
 }
 
@@ -131,12 +134,15 @@ ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]),
 GOEnrichment=FALSE, BgGenes=bg.genes)
 ```
 
-#### Step 5: Prepare expression and annotation datasets for clustering
+#### Step 3: Prepare expression and annotation datasets for clustering
 expressions: choose the desired dimensions <br> 
 annotations: choose the number of GO terms for optimal clustering <br> 
 number of group: choose the number of group for optimal clustering <br> 
 ``` r
 # expression dataset
+## show column names for dat
+colnames(dat)
+## this example selects log2 fold changes and adjusted p-values as input
 exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
@@ -150,7 +156,7 @@ ann <- ann[, apply(ann, 2, sum) >= 100]
 nb.group=8
 ```
 
-#### Step 6: Cluster genes, and visualize the result: `DGE.clust`, `cluster.plot`
+#### Step 4: Cluster genes, and visualize the result: `DGE.clust`, `cluster.plot`
 ``` r
 # Clustering analysis
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
@@ -168,7 +174,7 @@ adjPvalue=adjPvalue, color='brg')
 p.MCA ## show plot
 ```
 
-#### Step 7: GO enrichment of the clustering result (visualization): `cluster.enrich`
+#### Step 5: GO enrichment of the clustering result (visualization): `cluster.enrich`
 ``` r
 # Background genes for GO enrichment
 bg.genes <- treatment1.vs.control[gene.col]
