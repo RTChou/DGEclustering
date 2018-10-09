@@ -6,10 +6,10 @@ DGEclustering is an R package for multidimensional clustering of differential ge
 
 ## Introduction
 DGEclustering performs two primary tasks:<br>
-### I.  Searching from a starting directory for differential gene expression datasets (DESeq2 outputs), and automatically generating diagnostic plots for paired DGE datasets, which includes: Q-Q plots, fish plots, and scatter plots.
+<b>I.</b> Searching from a starting directory for differential gene expression datasets (DESeq2 outputs), and automatically generating diagnostic plots for paired DGE datasets, which includes: Q-Q plots, fish plots, and scatter plots.
 <p align="center"><img src="../assets/automation.png" width="700"></p>
    
-### II. Conducting multidimensional clustering analysis integrated with GO terms for paired DGE datasets. The GO terms are intergrated using the InteGO package (Verbanck, M., Lê, S. & Pagès, J. A new unsupervised gene clustering algorithm based on the integration of biological knowledge into expression data. BMC Bioinformatics 14, 42 (2013).)
+<b>II.</b> Conducting multidimensional clustering analysis integrated with GO terms for paired DGE datasets. The GO terms are intergrated using the InteGO package (Verbanck, M., Lê, S. & Pagès, J. A new unsupervised gene clustering algorithm based on the integration of biological knowledge into expression data. BMC Bioinformatics 14, 42 (2013).)
 <p align="center"><img src="../assets/clustering.png" width="650"></p>
 
 
