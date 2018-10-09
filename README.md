@@ -1,6 +1,6 @@
 DGEclustering
-=============
 <img src="../assets/logo.png" height="180" align="right" />
+=============
 DGEclustering is an R package for multidimensional clustering of differential gene expression (DGE) datasets, and it integrates GO annotations to improve the clustering result.
 
 ## Introduction
