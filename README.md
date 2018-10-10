@@ -111,7 +111,9 @@ y.threshold=y.threshold, adjPvalue=adjPvalue)
 
 ## show Plot
 sig.res$p
-
+```
+<p align="center"><img src="../assets/sig_plot.png" width="450"></p>
+``` r
 ## show datasets
 ## for two paired datasets, there will be discordant and concordant datasets. Discordant dataset contains 
 ## a set of genes having different signs of log2 fold changes between the paired datasets, whereas 
@@ -140,7 +142,7 @@ ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]),
 #### Step 3: Prepare expression and annotation datasets for clustering
 Expression dataset: choose the desired dimensions <br> 
 Annotation dataset: choose the number of GO terms for optimal clustering <br> 
-Number of group: choose the number of group for optimal clustering <br> 
+Number of groups: choose the number of group for optimal clustering <br> 
 ``` r
 # expression dataset
 ## show column names for dat
@@ -178,13 +180,16 @@ p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene
 
 ## show plot
 p 
-
+```
+<p align="center"><img src="../assets/cluster_plot.png" width="450"></p>
+``` r
 # visualize the clustering result (MCA plot)
 p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, adjPvalue=adjPvalue)
 
 ## show plot
 p.MCA 
 ```
+<p align="center"><img src="../assets/MCA_plot.png" width="450"></p>
 
 #### Step 5: GO enrichment of the clustering result (visualization): `cluster.enrich`
 ``` r
