@@ -12,6 +12,8 @@
 #' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
 #' @param color type of matplotlib colormap
 #' @export
+#' @import png
+#' @import grid
 #' @examples  \dontrun{}
 cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
   temp.folder <- '/tmp/dgeclustering'
