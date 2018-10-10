@@ -84,6 +84,7 @@ data(list=c('treatment1.vs.control', 'treatment2.vs.control', 'treatment3.vs.con
 
 # Create a list of datasets
 ## in this example we cluster on only two paired datasets
+## the user can also cluster on more paired datasets by putting them into a list
 datasets <- list(treatment1.vs.control, treatment2.vs.control)
 names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 ```
@@ -132,13 +133,14 @@ ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]),
 ```
 
 #### Step 3: Prepare expression and annotation datasets for clustering
-expressions: choose the desired dimensions <br> 
-annotations: choose the number of GO terms for optimal clustering <br> 
-number of group: choose the number of group for optimal clustering <br> 
+Expression dataset: choose the desired dimensions <br> 
+Annotation dataset: choose the number of GO terms for optimal clustering <br> 
+Number of group: choose the number of group for optimal clustering <br> 
 ``` r
 # expression dataset
 ## show column names for dat
 colnames(dat)
+
 ## this example selects log2 fold changes and adjusted p-values as input
 exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
@@ -146,6 +148,7 @@ rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 # annotaiton dataset
 ## calculate number of GO terms assign to a specific number of genes
 sum(apply(ann, 2, sum) >= 100)
+
 ## choose the appropriate number of GO terms for annotation dataset
 ann <- ann[, apply(ann, 2, sum) >= 100]
 
@@ -157,18 +160,24 @@ nb.group=8
 ``` r
 # Clustering analysis
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
-res$groups ## view clustering result
-res$vignette ## view vignette
+
+## view clustering result and vignette
+res$groups 
+res$vignette 
 
 # visualize the clustering result
 p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, 
 adjPvalue=adjPvalue, color='brg')
-p ## show plot
+
+## show plot
+p 
 
 # visualize the clustering result (MCA plot)
 p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, 
 adjPvalue=adjPvalue, color='brg')
-p.MCA ## show plot
+
+## show plot
+p.MCA 
 ```
 
 #### Step 5: GO enrichment of the clustering result (visualization): `cluster.enrich`
@@ -180,7 +189,7 @@ bg.genes <- treatment1.vs.control[gene.col]
 p.GO <- cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, 
 ont='BP', top=10)
 
-# show plot
+## show plot
 p.GO
 ```
 
