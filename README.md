@@ -35,7 +35,6 @@ Import libraries:
 ``` r
 library(DGEclustering)
 library(AnnotationHub)
-library(RSQLite)
 # Code from https://github.com/lcdb/lcdb-wf/blob/master/workflows/rnaseq/downstream/helpers.Rmd
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
@@ -160,7 +159,7 @@ nb.group=8
 ``` r
 # Clustering analysis
 ## the user can choose from two types of clustering algorithm through `clust.method`:
-## 1. agnes (Agglomerative Nesting (Hierarchical Clustering))
+## 1. agnes (Agglomerative Nesting (Hierarchical Clustering); DOI:10.1002/9780470316801)
 ## 2. genclust (GenClust; DOI: 10.1186/1471-2105-6-289)
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='agnes', nb.group=nb.group)
 
