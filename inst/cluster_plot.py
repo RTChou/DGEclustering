@@ -101,7 +101,7 @@ def main():
     ax.legend(groups, group_names, markerscale=3, prop={'size': 26})
     plt.savefig(args.out_dir + '/cluster_all.png')
 
-    if arg.subplots == 0:
+    if args.subplots == 0:
         return
     # -- subplots --
     for j in range(0, len(group_list)):
