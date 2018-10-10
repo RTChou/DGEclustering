@@ -1,3 +1,4 @@
+# for installing package
 r-base >=3.4
 python >=3.6
 r-factominer
@@ -11,3 +12,5 @@ r-reshape2
 bioconductor-gosemsim
 bioconductor-genomicfeatures
 r-png
+bioconductor-annotationhub
+r-rsqlite
