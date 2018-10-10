@@ -33,7 +33,6 @@ sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshol
              '-g', geneCol,
 	     '-n1', x.dsNumber - 1,
              '-n2', y.dsNumber - 1,
-             '-p', temp.folder,
              '-d', temp.folder,
              '-o', 'temp',
              '-x', x.threshold,

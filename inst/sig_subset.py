@@ -10,8 +10,7 @@ def main():
     parser.add_argument('-g', '--gene_col', required=True, help='gene ID column name')
     parser.add_argument('-n1', '--x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
     parser.add_argument('-n2', '--y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
-    parser.add_argument('-p', '--plot_dir', required=True, help='plotting directory')
-    parser.add_argument('-d', '--dat_dir', required=True, help='significant data directory')
+    parser.add_argument('-d', '--dir', required=True, help='output directory')
     parser.add_argument('-o', '--output', help='output file name')
     parser.add_argument('-x', '--x_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot x axis')
     parser.add_argument('-y', '--y_threshold', default=0.05, type=float, help='(adjusted) pvalue for scatter plot y axis')
@@ -19,7 +18,7 @@ def main():
     args = parser.parse_args()
 
     warnings.filterwarnings('ignore') # ignore runtime warnings
-    temp = plotting.scatter_plot(file_paths=args.file_paths, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, plot_out_dir=args.plot_dir, dat_out_dir=args.dat_dir, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True, out_file_name=args.output)
+    temp = plotting.scatter_plot(file_paths=args.file_paths, gene_col=args.gene_col, x_file_number=args.x_file_number, y_file_number=args.y_file_number, out_dir=args.dir, x_threshold=args.x_threshold, y_threshold=args.y_threshold, adj_pvalue=args.adj_pvalue, return_sig_plot=True, out_file_name=args.output)
     
 if __name__ == '__main__':
     main()
