@@ -182,6 +182,7 @@ p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene
 p 
 ```
 <p align="center"><img src="../assets/cluster_plot.png" width="450"></p>
+
 ``` r
 # visualize the clustering result (MCA plot)
 p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, adjPvalue=adjPvalue)
