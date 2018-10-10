@@ -72,7 +72,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
             'sig vs NS (' + str(sig_vs_NS.shape[0]) + ')',
             'NS vs sig (' + str(NS_vs_sig.shape[0]) + ')',
             'NS vs NS (' + str(NS_vs_NS.shape[0]) + ')'),
-            markerscale=1, prop={'size': 26})
+            markerscale=3, prop={'size': 26})
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.set_ylim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
@@ -130,10 +130,10 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
         g2 = ax.scatter(non_NA_set[log2FoldChange_x], non_NA_set[log2FoldChange_y], s=9, c='grey', alpha=0.3)
         if len(datasets) == 2:
             g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-            ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1, prop={'size': 26})
+            ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=3, prop={'size': 26})
         else:
             g1 = ax.scatter(all_sig[log2FoldChange_x], all_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-            ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1, prop={'size': 26})    
+            ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=3, prop={'size': 26})    
         
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
@@ -203,9 +203,9 @@ def fish_plot(file_path_1, file_path_2, gene_col, output_dir):
     ax.set_ylim(-40, 40)
     ax.axvline(x=0, linestyle='dotted', color='grey')
     ax.axhline(y=0, linestyle='dotted', color='grey')
-    ax.set_title('(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=26, y=1.02)
-    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=25)
-    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=25)
+    ax.set_title('(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')', fontweight='bold', fontsize=24, y=1.02)
+    ax.set_xlabel(xtitle + u' -log\u2081\u2080 pvalue', fontsize=22)
+    ax.set_ylabel(ytitle + u' -log\u2081\u2080 pvalue', fontsize=22)
     ax.tick_params(labelsize=12)
 
     fig.savefig(output_dir + '/' + filename_1 + '_vs_' + filename_2 + '_fish_plot.png')
@@ -253,9 +253,9 @@ def qq_plot(output_dir, file_path=None, dataset=None):
     else:
         filename = 'null'
         title = 'Null'
-    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=26, y=1.02)
-    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=25)
-    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=25)
+    ax.set_title(title + ' QQ-Plot', fontweight='bold', fontsize=24, y=1.02)
+    ax.set_xlabel('expected -log\u2081\u2080 pvalue', fontsize=22)
+    ax.set_ylabel('observed -log\u2081\u2080 pvalue', fontsize=22)
     ax.tick_params(labelsize=12)
 
     fig.savefig(output_dir + '/' + filename + '_qq_plot.png')
