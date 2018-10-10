@@ -98,7 +98,7 @@ def main():
         ell = Ellipse(xy=[cx, cy], width=np.std(x) * 5, height=np.std(y) * 5, angle=angle, ec='k', fc=color, alpha=0.2)
         ax.add_patch(ell)
     
-    ax.legend(groups, group_names, markerscale=1)
+    ax.legend(groups, group_names, markerscale=3, prop={'size': 26})
     plt.savefig(args.out_dir + '/cluster_all.png')
 
     if arg.subplots == 0:
@@ -175,7 +175,7 @@ def main():
         ell = Ellipse(xy=[cx, cy], width=np.std(x) * 5, height=np.std(y) * 5, angle=angle, ec='k', fc=color, alpha=0.2)
         ax.add_patch(ell)
 
-        ax.legend((g1,), (g1_name,), markerscale=1)
+        ax.legend((g1,), (g1_name,), markerscale=3, prop={'size': 26})
         plt.savefig(args.out_dir + '/cluster_' + str(j + 1) + '.png')
 
 if __name__ == '__main__':
