@@ -159,7 +159,10 @@ nb.group=8
 #### Step 4: Cluster genes, and visualize the result: `DGE.clust`, `cluster.plot`
 ``` r
 # Clustering analysis
-res <- DGE.clust(expressions=exp, annotations=ann, clust.method='intego', nb.group=nb.group)
+## the user can choose from two types of clustering algorithm:
+## 1. Agglomerative Hierarchical Cluatering
+## 2. GenClust ()
+res <- DGE.clust(expressions=exp, annotations=ann, clust.method='agnes', nb.group=nb.group)
 
 ## view clustering result and vignette
 res$groups 
