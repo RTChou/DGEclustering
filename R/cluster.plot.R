@@ -14,7 +14,7 @@
 #' @export
 #' @import png
 #' @examples  \dontrun{}
-cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
+cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subplots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
   if (MCA == FALSE) {
@@ -46,6 +46,7 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALS
                '-d', temp.folder,
                '-f', paste(filepaths, collapse=' '),
                '-m', python.boolean.convert(MCA),
+	       '-s', python.boolean.convert(subplots),
                '-n1', x.dsNumber - 1,
 	       '-n2', y.dsNumber - 1,
 	       '-g', geneCol,
@@ -53,7 +54,7 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALS
                '-a', python.boolean.convert(adjPvalue),
                '-c', color))
   # plotting
-  if (subPlots == FALSE){
+  if (subplots == FALSE){
     img <- readPNG(file.path(temp.folder, 'cluster_all.png'))
     g <- grid::rasterGrob(img, interpolate=TRUE)
     p <- ggplot() +

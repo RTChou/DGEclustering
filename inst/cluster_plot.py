@@ -16,6 +16,7 @@ def main():
     parser.add_argument('-d', '--out_dir', required=True, help='output directory for resulting plots')
     parser.add_argument('-f', '--file_paths', nargs='+', help='a list of filepaths. e.g. ./multidimension.py -l path1 path2 path3')
     parser.add_argument('-m', '--MCA_result', default=0, type=int, help='whether or not the input is a MCA result. 1 as True, 0 as False')
+    parser.add_argument('s', '--subplots', default=0, type=int, help='whether to generate subplots. 1 as True, 0 as False')
     parser.add_argument('-n1', '--x_file_number', default=0, type=int, help='file number in list for x axis. index starts at 0')
     parser.add_argument('-n2', '--y_file_number', default=1, type=int, help='file number in list for y axis. index starts at 0')
     parser.add_argument('-g', '--gene_col', required=True, type=str, help='gene ID column name') 
@@ -100,6 +101,8 @@ def main():
     ax.legend(groups, group_names, markerscale=1)
     plt.savefig(args.out_dir + '/cluster_all.png')
 
+    if arg.subplots == 0:
+        return
     # -- subplots --
     for j in range(0, len(group_list)):
         # prepare plotting axes
