@@ -54,11 +54,11 @@ dir <- './'
 # Automated plotting of diagnostic plots
 automation(rootDir=dir, geneCol=gene.col, qqPlot=TRUE, fishPlot=TRUE, scatterPlot=TRUE)
 
-# (optional) search for files in the database
+## (optional) search for files in the database
 mydb <- dbConnect(RSQLite::SQLite(), 'rnaseq.db')
 dbListTables(mydb)
 
-# remember to close and disconnect the database
+## remember to close and disconnect the database
 dbDisconnect(mydb)
 unlink('rnaseq.db')
 ```
