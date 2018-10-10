@@ -8,6 +8,7 @@
 #' @param BgGenes background genes if use GO enrichment.
 #' @param ont One of 'ALL', 'BP', 'BF', or 'CC'.
 #' @export
+#' @import AnnotationHub
 #' @import clusterProfiler
 #' @return ann a dataframe of the GO term binary matrix
 #' @examples  \dontrun{}
