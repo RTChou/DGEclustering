@@ -17,12 +17,13 @@
 cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subplots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
   temp.folder <- '/tmp/dgeclustering'
   system(paste('mkdir -p', temp.folder))
+  cluster.filepath <- file.path(temp.folder, 'clusters.tsv')
+  write.table(stack(res.groups), file=cluster.filepath, sep='\t', row.names=FALSE)
   if (MCA == FALSE) {
     if (is.null(datasets) | is.null(res.groups)){i
       stop('arguments \"datasets\" and \"res.groups\" should not be NULL.')
     }
     filepaths <- file.path(temp.folder, paste0(names(datasets), '.tsv'))
-    cluster.filepath <- file.path(temp.folder, 'clusters.tsv')
     for (i in 1:length(datasets)){
       write.table(datasets[[i]], file=filepaths[i], sep='\t', row.names=FALSE)
     }
@@ -34,7 +35,6 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subplots=FALS
     filepaths <- file.path(temp.folder, 'MCA.tsv')
     write.table(res$MCA, 'MCA.tsv', sep='\t', row.names=TRUE, col.names=NA)
   }
-  write.table(stack(res.groups), file=cluster.filepath, sep='\t', row.names=FALSE)
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
       return('1')
