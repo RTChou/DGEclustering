@@ -30,7 +30,7 @@ source activate r-dgeclustering
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
 
-Alternatively, the user can install DGEclustering from bioconda, but it may not be the latest version:
+Alternatively, the user can install DGEclustering from [Bioconda](https://bioconda.github.io "Bioconda"), but it may not be the latest version:
 ``` bash
 conda install r-dgeclustering
 ```
