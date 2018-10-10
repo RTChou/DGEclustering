@@ -14,3 +14,4 @@ bioconductor-genomicfeatures
 r-png
 bioconductor-annotationhub
 r-rsqlite
+genclust
