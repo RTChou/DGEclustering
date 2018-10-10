@@ -161,7 +161,7 @@ nb.group=8
 # Clustering analysis
 ## the user can choose from two types of clustering algorithm:
 ## 1. Agglomerative Hierarchical Cluatering
-## 2. GenClust ()
+## 2. GenClust (DOI: 10.1186/1471-2105-6-289)
 res <- DGE.clust(expressions=exp, annotations=ann, clust.method='agnes', nb.group=nb.group)
 
 ## view clustering result and vignette
