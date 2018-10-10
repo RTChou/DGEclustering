@@ -111,7 +111,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
             anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
             anchored_text.patch.set(color='red', alpha=0.3)
 
-        else: # the significant threshold for multiple files will be the smallest for all
+        else: # the significant threshold for multiple files will be the smaller one between x_ and y_threshold
             if adj_pvalue == True:
                 temp = pd.concat((sig_vs_sig['%i_padj'%i] < min(x_threshold, y_threshold) for i in np.arange(len(datasets))), axis=1).all(axis=1)
             else:
