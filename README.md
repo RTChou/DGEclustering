@@ -36,13 +36,10 @@ Import libraries:
 library(DGEclustering)
 library(AnnotationHub)
 library(RSQLite)
+# Code from https://github.com/lcdb/lcdb-wf/blob/master/workflows/rnaseq/downstream/helpers.Rmd
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
-
-        # Cache location is specific to this instance of lcdb-wf so we don't
-        # clobber old runs with new annotation data
         './AnnotationHubCache',
-
         httr::use_proxy(Sys.getenv("http_proxy")),
         FALSE)
 ```
