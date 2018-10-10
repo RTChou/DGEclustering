@@ -9,7 +9,6 @@
 #' @param adjPvalue if TRUE, use adjusted p-value for the threshold; if FALSE, use p-value
 #' @export
 #' @import png
-#' @import grid
 #' @import ggplot2
 sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshold=0.05, y.threshold=0.05, adjPvalue=TRUE) {
   # export datasets to temp folder
@@ -42,7 +41,7 @@ sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshol
              '-y', python.boolean.convert(adjPvalue)))
   # plot the scatter plot
   img <- readPNG(file.path(temp.folder, 'temp_sig_plot.png'))
-  g <- rasterGrob(img, interpolate=TRUE) 
+  g <- grid::rasterGrob(img, interpolate=TRUE) 
   p <- ggplot() +
     annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
   if (length(datasets) == 2) {

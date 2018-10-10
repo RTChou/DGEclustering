@@ -13,7 +13,6 @@
 #' @param color type of matplotlib colormap
 #' @export
 #' @import png
-#' @import grid
 #' @examples  \dontrun{}
 cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALSE, x.dsNumber=1, y.dsNumber=2, geneCol, adjPvalue=TRUE, color='brg'){
   temp.folder <- '/tmp/dgeclustering'
@@ -56,7 +55,7 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subPlots=FALS
   # plotting
   if (subPlots == FALSE){
     img <- readPNG(file.path(temp.folder, 'cluster_all.png'))
-    g <- rasterGrob(img, interpolate=TRUE)
+    g <- grid::rasterGrob(img, interpolate=TRUE)
     p <- ggplot() +
     annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
     return(p)
