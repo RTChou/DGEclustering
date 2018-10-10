@@ -14,16 +14,22 @@ DGEclustering performs two primary tasks:<br>
 
 
 ## Installation
-1. Create and activate conda environment:
-``` bash
+1. Clone the github repository:
+```
+git clone https://github.com/reneechou123/DGEclustering.git
+```
+
+2. Create and activate conda environment:
+``` 
 conda create -n r-dgeclustering --file DGEclustering/requirements.txt
 source activate r-dgeclustering
 ```
 
-2. Install package in R:
+3. Install package in R:
 ``` r
 install.packages('DGEclustering', type='source', repos=NULL)
 ```
+
 Alternatively, the user can install DGEclustering from bioconda, but it may not be the latest version:
 ``` bash
 conda install r-dgeclustering
