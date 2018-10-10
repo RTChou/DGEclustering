@@ -113,6 +113,7 @@ y.threshold=y.threshold, adjPvalue=adjPvalue)
 sig.res$p
 ```
 <p align="center"><img src="../assets/sig_plot.png" width="450"></p>
+
 ``` r
 ## show datasets
 ## for two paired datasets, there will be discordant and concordant datasets. Discordant dataset contains 
