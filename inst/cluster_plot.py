@@ -63,9 +63,10 @@ def main():
         ytitle = 'Dim2'
         # ax.axvline(x=0, linestyle='dotted', color='grey')
         # ax.axhline(y=0, linestyle='dotted', color='grey')
-        ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
-        ax.set_xlabel(xtitle, fontsize=15)
-        ax.set_ylabel(ytitle, fontsize=15)
+        ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
+        ax.set_xlabel(xtitle, fontsize=35)
+        ax.set_ylabel(ytitle, fontsize=35)
+        ax.tick_params(labelsize=22)
     
     # plotting
     groups = list()
@@ -115,9 +116,10 @@ def main():
             title = 'MCA plot'
             xtitle = 'Dim1'
             ytitle = 'Dim2'
-            ax.set_title(title, fontweight='bold', fontsize=16, y=1.02)
-            ax.set_xlabel(xtitle, fontsize=15)
-            ax.set_ylabel(ytitle, fontsize=15)
+            ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
+            ax.set_xlabel(xtitle, fontsize=35)
+            ax.set_ylabel(ytitle, fontsize=35)
+            ax.tick_params(labelsize=22)
         
         # plotting
         for index, group in enumerate(group_list):
