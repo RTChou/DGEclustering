@@ -33,7 +33,7 @@ cluster.plot <- function(datasets, res.groups, res.MCA, MCA=FALSE, subplots=FALS
       stop('\"res.groups\" and \"res.MCA\" should not be NULL.')
     }
     filepaths <- file.path(temp.folder, 'MCA.tsv')
-    write.table(res$MCA, 'MCA.tsv', sep='\t', row.names=TRUE, col.names=NA)
+    write.table(res$MCA, filepaths, sep='\t', row.names=TRUE, col.names=NA)
   }
   python.boolean.convert <- function(bool) {
     if (bool == TRUE)
