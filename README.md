@@ -175,14 +175,14 @@ res$vignette
 
 # visualize the clustering result
 p <- cluster.plot(datasets, res$groups, x.dsNumber=1, y.dsNumber=2, geneCol=gene.col, 
-adjPvalue=adjPvalue, color='brg')
+adjPvalue=adjPvalue)
 
 ## show plot
 p 
 
 # visualize the clustering result (MCA plot)
 p.MCA <- cluster.plot(res.groups=res$groups, res.MCA=res$MCA, MCA=TRUE, geneCol=gene.col, 
-adjPvalue=adjPvalue, color='brg')
+adjPvalue=adjPvalue)
 
 ## show plot
 p.MCA 
