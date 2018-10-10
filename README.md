@@ -52,7 +52,7 @@ hub <- AnnotationHub::.Hub("AnnotationHub",
 
 ### I. Automation of diagnostic plots: `automation`
    This function will create plotting folders for the three types of diagnostic plots in the starting directory: `qq_plots`, 
-   `fish_plots`, `scatter_plots`, and `paired_files`.
+   `fish_plots`, and `scatter_plots`.
 ``` r
 # Specify the column name for gene IDs in DGE datasets as well as the starting directory
 gene.col <- 'gene'
@@ -96,9 +96,10 @@ names(datasets) <- c('treatment1.vs.control', 'treatment2.vs.control')
 
 #### Step 1-1: Set the (adjusted) p-value thresholds for selecting genes
 ``` r
-x.threshold <- 0.05
-y.threshold <- 0.05
 adjPvalue <- TRUE
+x.threshold <- 0.05 ## for the first dataset
+y.threshold <- 0.05 ## for the second dataset
+## the significant threshold for multiple files will be the smaller one between x. and y.threshold
 ```
 
 #### Step 1-2: Merge datasets and subset the significant genes: `sig.subset`
@@ -132,12 +133,8 @@ if (length(sig.res) == 3) { ## for two paired datasets we can combine the discor
   dat <- sig.res$dat
 }
 
-# Background genes for GO enrichment
-bg.genes <- treatment1.vs.control[gene.col]
-
 # Annotate genes
-ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]), 
-GOEnrichment=FALSE, BgGenes=bg.genes)
+ann <- annotate.genes(OrgDb=orgdb, keyType=keytype, genes=unlist(dat[gene.col]), GOEnrichment=FALSE)
 ```
 
 #### Step 3: Prepare expression and annotation datasets for clustering
