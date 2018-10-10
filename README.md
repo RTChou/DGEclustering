@@ -36,9 +36,6 @@ Import libraries:
 library(DGEclustering)
 library(AnnotationHub)
 library(RSQLite)
-library(stringr)
-library(ggplot2)
-library(clusterProfiler)
 hub <- AnnotationHub::.Hub("AnnotationHub",
         getAnnotationHubOption("URL"),
 
