@@ -83,7 +83,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
         title = '(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')'
         sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
                    ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
-        anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
+        anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3, prop={'size': 26})
         anchored_text.patch.set(color='red', alpha=0.3)
 
         ax.set_title(title, fontweight='bold', fontsize=36, y=1.02)
@@ -108,7 +108,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
                 sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=True)
                 
             title = '(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')'
-            anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
+            anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3, prop={'size': 26})
             anchored_text.patch.set(color='red', alpha=0.3)
 
         else: # the significant threshold for multiple files will be the smaller one between x_ and y_threshold
