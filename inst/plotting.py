@@ -72,7 +72,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
             'sig vs NS (' + str(sig_vs_NS.shape[0]) + ')',
             'NS vs sig (' + str(NS_vs_sig.shape[0]) + ')',
             'NS vs NS (' + str(NS_vs_NS.shape[0]) + ')'),
-            markerscale=1)
+            markerscale=1, prop={'size': 26})
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
         ax.set_ylim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5, 
@@ -80,7 +80,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
         ax.axvline(x=0, linestyle='dotted', color='grey')
         ax.axhline(y=0, linestyle='dotted', color='grey')
 
-        title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
+        title = '(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')'
         sig_discordant = sig_vs_sig[((sig_vs_sig[log2FoldChange_x] < 0) & (sig_vs_sig[log2FoldChange_y] > 0)) |
                    ((sig_vs_sig[log2FoldChange_x] > 0) & (sig_vs_sig[log2FoldChange_y] < 0))]
         anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
@@ -107,7 +107,7 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
             if sig_concordant.shape[0] > 0:
                 sig_concordant.to_csv(out + '_agreeing_genes.tsv', sep='\t', index=True)
                 
-            title = '(' + xtitle + ') vs (' + ytitle + ') (gene number=' + str(merged_set.shape[0]) + ')'
+            title = '(' + xtitle + ') vs (' + ytitle + ')\n(gene number=' + str(merged_set.shape[0]) + ')'
             anchored_text = AnchoredText('# of sig vs sig in II and IV: ' + str(sig_discordant.shape[0]), loc=3)
             anchored_text.patch.set(color='red', alpha=0.3)
 
@@ -130,10 +130,10 @@ def scatter_plot(file_paths, gene_col, x_file_number=0, y_file_number=1, out_dir
         g2 = ax.scatter(non_NA_set[log2FoldChange_x], non_NA_set[log2FoldChange_y], s=9, c='grey', alpha=0.3)
         if len(datasets) == 2:
             g1 = ax.scatter(sig_vs_sig[log2FoldChange_x], sig_vs_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-            ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1)
+            ax.legend((g1,), ('sig vs sig (' + str(sig_vs_sig.shape[0]) + ')',), markerscale=1, prop={'size': 26})
         else:
             g1 = ax.scatter(all_sig[log2FoldChange_x], all_sig[log2FoldChange_y], s=15, c=(214 / 255., 39 / 255., 40 / 255.), alpha=1.0)
-            ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1)    
+            ax.legend((g1,), ('all sig (' + str(all_sig.shape[0]) + ')',), markerscale=1, prop={'size': 26})    
         
         ax.set_xlim(min(non_NA_set[log2FoldChange_x].min(), non_NA_set[log2FoldChange_y].min()) - 0.5,
                 max(non_NA_set[log2FoldChange_x].max(), non_NA_set[log2FoldChange_y].max()) + 0.5)
