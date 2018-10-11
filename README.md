@@ -150,6 +150,7 @@ Number of groups: choose the number of group for optimal clustering <br>
 colnames(dat)
 
 ## this example selects log2 fold changes and adjusted p-values as input
+## no scaling required
 exp <- dat[,grepl("log2FoldChange|padj", colnames(dat))]
 rownames(exp) <- make.names(dat[,gene.col], unique=TRUE)
 
