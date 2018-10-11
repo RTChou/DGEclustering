@@ -1,6 +1,5 @@
 # R packages
 r-base >=3.4
-python >=3.6
 r-factominer
 r-cluster
 bioconductor-clusterprofiler
@@ -16,17 +15,10 @@ bioconductor-annotationhub
 r-rsqlite
 
 # Python libraries
-argparse
-os
-re
+python >=3.6
 pandas
-numpy
-sqlite3
 matplotlib
-warnings
-random
 scipy
-math
 
 # Genclust
 genclust
