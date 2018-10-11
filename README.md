@@ -198,7 +198,7 @@ p.MCA
 # Background genes for GO enrichment
 bg.genes <- treatment1.vs.control[gene.col]
 
-# Visualizing GO enrichment result, and showing only the top 10 terms for each cluster
+# Visualizing GO enrichment result, and showing only the top 5 terms for each cluster
 p.GO <- cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, 
 ont='BP', top=5)
 
