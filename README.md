@@ -200,11 +200,12 @@ bg.genes <- treatment1.vs.control[gene.col]
 
 # Visualizing GO enrichment result, and showing only the top 10 terms for each cluster
 p.GO <- cluster.enrich(clusterGroups=res$groups, OrgDb=orgdb, keyType=keytype, BgGenes=bg.genes, 
-ont='BP', top=10)
+ont='BP', top=5)
 
 ## show plot
 p.GO
 ```
+<p align="center"><img src="../assets/GO_plot.png" width="750"></p>
 
 ### Session Information
 ``` r
