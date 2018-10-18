@@ -13,6 +13,7 @@ bioconductor-genomicfeatures
 r-png
 bioconductor-annotationhub
 r-rsqlite
+bioconductor-DOSE=3.4.0
 
 # Python libraries
 python >=3.6
