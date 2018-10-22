@@ -11,21 +11,37 @@
 #' @export
 #' @import InteGO
 #' @import rlist
+#' @import GOSemSim
+#' @import AnnotationDbi
 #' @references \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-42}
 #' @return
 #' @examples  \dontrun{}
-DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.group, genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
+DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', clust.method='agnes', nb.group, OrgDb, ont='BP', genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
   nb.dim.ex <- ncol(expressions)
   nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
   
   if (!is.null(annotations)){
-    integrated.matrix <- Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
-    integrated.matrix <- apply(integrated.matrix, 2, as.factor)
-    # MCA <- MCAsimple(integrated.matrix)[, 1:nb.dim.an]
-    MCA <- MCAsimple(integrated.matrix)[, 1:2]
+    if (integrate.method == 'intego'){
+      integrated.matrix <- Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
+      integrated.matrix <- apply(integrated.matrix, 2, as.factor)
+      MCA <- MCAsimple(integrated.matrix)[, 1:2]
+      DIST <- dist(MCA, diag=TRUE, upper=TRUE)
+    }
+    else{
+      semData <- godata(OrgDb=OrgDb, ont='BP', computeIC=FALSE)
+      genes <- mapIds(orgdb, keys=dat$gene, column='ENTREZID', keytype='ENSEMBL', multiVals='first')
+      genes <- genes[!is.na(genes)] 
+      GO.sim <- mgeneSim(genes, semData, measure='Wang')
+      sub.genes <- genes[genes %in% colnames(GO.sim)]
+      sub.expressions <- expressions[rownames(expressions) %in% names(sub_genes),]
+      sub.annotations <- annotations[rownames(annotations) %in% names(sub_genes),]
+      exp.sim <- as.matrix(dist(sub.expressions, diag=TRUE, upper=TRUE))
+      new.sim <- exp.sim * GO.sim
+      PCA <- PCAsimple(new.sim)$ind[, 1:2]
+      DIST <- dist(PCA, diag=TRUE, upper=TRUE)
+    }
   
     if (clust.method != 'genclust'){ # set intego as default
-      DIST <- dist(MCA, diag=TRUE, upper=TRUE)
       groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     }
 
@@ -140,7 +156,7 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.gr
                   paste('## Number of groups:', nb.group), sep='\n'), '\n')
   }
 
-  else {
+  else { # annotations = NULL
     DIST <- dist(expressions, diag=TRUE, upper=TRUE)
     groups <- clustering(DIST, mode='Classification', nb.group=nb.group)
     integrated.matrix <- NULL
@@ -151,7 +167,15 @@ DGE.clust <- function(expressions, annotations=NULL, clust.method='agnes', nb.gr
                   paste('## Number of groups:', nb.group), sep='\n'), '\n')
   }
   
-  res <- list(groups, integrated.matrix, MCA, vignette)
-  names(res) <- c('groups', 'integrated.matrix', 'MCA', 'vignette')
+  if (integrate.method == 'intego'){
+    evaluation <- Indicators(groups, expressions, annotations)
+    res <- list(groups, integrated.matrix, MCA, vignette, evaluation)
+    names(res) <- c('groups', 'integrated.matrix', 'MCA', 'vignette', 'evaluation')
+  }
+  else {
+    evaluation <- Indicators(groups, sub.expressions, sub.annotations)
+    res <- list(groups, integrated.matrix, PCA, vignette, evaluation)
+    names(res) <- c('groups', 'integrated.matrix', 'PCA', 'vignette', 'evaluation')
+  }
   return(res)
 }
