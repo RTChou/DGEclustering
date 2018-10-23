@@ -45,8 +45,8 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
       genes <- genes[!is.na(genes)] 
       GO.sim <- mgeneSim(genes, semData, measure='Wang')
       sub.genes <- genes[genes %in% colnames(GO.sim)]
-      sub.expressions <- expressions[rownames(expressions) %in% names(sub_genes),]
-      sub.annotations <- annotations[rownames(annotations) %in% names(sub_genes),]
+      sub.expressions <- expressions[rownames(expressions) %in% names(sub.genes),]
+      sub.annotations <- annotations[rownames(annotations) %in% names(sub.genes),]
       exp.sim <- as.matrix(dist(sub.expressions, diag=TRUE, upper=TRUE))
       new.sim <- exp.sim * GO.sim
       PCA <- PCAsimple(new.sim)$ind[, 1:2]
