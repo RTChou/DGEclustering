@@ -45,9 +45,9 @@ sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshol
     annotation_custom(g, xmin=-Inf, xmax=Inf, ymin=-Inf, ymax=Inf)
   if (length(datasets) == 2) {
     dis <- read.table(file.path(temp.folder, 'temp_disagreeing_genes.tsv'), header=TRUE, 
-      check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+      check.names=FALSE, sep='\t', stringsAsFactors=FALSE, quote='')
     con <- read.table(file.path(temp.folder, 'temp_agreeing_genes.tsv'), header=TRUE, 
-      check.names=FALSE, sep='\t', stringsAsFactors=FALSE)
+      check.names=FALSE, sep='\t', stringsAsFactors=FALSE, quote='')
     res <- list(dis, con, p)
     names(res) <- c('dis', 'con', 'p')
     return(res)
