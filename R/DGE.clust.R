@@ -48,8 +48,8 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
       sub.expressions <- expressions[rownames(expressions) %in% names(sub.genes),]
       sub.annotations <- annotations[rownames(annotations) %in% names(sub.genes),]
       exp.sim <- as.matrix(dist(sub.expressions, diag=TRUE, upper=TRUE))
-      new.sim <- exp.sim * GO.sim
-      PCA <- PCAsimple(new.sim)$ind[, 1:2]
+      integrated.matrix <- exp.sim * GO.sim
+      PCA <- PCAsimple(integrated.matrix)$ind[, 1:2]
       DIST <- dist(PCA, diag=TRUE, upper=TRUE)
     }
   
