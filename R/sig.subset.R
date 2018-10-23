@@ -54,7 +54,7 @@ sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshol
   } 
   else {
     dat <- read.table(file.path(temp.folder, 'temp_all_sig_genes.tsv'), header=TRUE, check.names=FALSE, 
-      sep='\t', stringsAsFactors=FALSE)
+      sep='\t', stringsAsFactors=FALSE, quote='')
     res <- list(dat, p)
     names(res) <- c('dat', 'p')
     return(res)
