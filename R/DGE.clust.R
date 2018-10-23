@@ -41,7 +41,7 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
         stop('the argument OrgDb is required for new.distance integration method.')
       }
       semData <- godata(OrgDb=OrgDb, ont='BP', computeIC=FALSE)
-      genes <- mapIds(orgdb, keys=rownames(expressions), column='ENTREZID', keytype=keyType, multiVals='first')
+      genes <- mapIds(OrgDb=OrgDb, keys=rownames(expressions), column='ENTREZID', keytype=keyType, multiVals='first')
       genes <- genes[!is.na(genes)] 
       GO.sim <- mgeneSim(genes, semData, measure='Wang')
       sub.genes <- genes[genes %in% colnames(GO.sim)]
