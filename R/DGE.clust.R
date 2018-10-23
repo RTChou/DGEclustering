@@ -16,7 +16,7 @@
 #' @references \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-14-42}
 #' @return
 #' @examples  \dontrun{}
-DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', clust.method='agnes', nb.group, OrgDb, ont='BP', genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
+DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', clust.method='agnes', nb.group, OrgDb=NULL, ont='BP', genclust.priori=FALSE, nb.generation=500, LIM.ASSO=4, LIM.COR=0.5){
   nb.dim.ex <- ncol(expressions)
   nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
   
@@ -37,6 +37,9 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
       DIST <- dist(MCA, diag=TRUE, upper=TRUE)
     }
     else{
+      if (is.null(OrgDb)){
+        stop('the argument OrgDb is required for new.distance integration method.')
+      }
       semData <- godata(OrgDb=OrgDb, ont='BP', computeIC=FALSE)
       genes <- mapIds(orgdb, keys=dat$gene, column='ENTREZID', keytype='ENSEMBL', multiVals='first')
       genes <- genes[!is.na(genes)] 
