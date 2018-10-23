@@ -20,6 +20,15 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
   nb.dim.ex <- ncol(expressions)
   nb.dim.an <- min((nrow(annotations) - 1), (ncol(annotations) - 1))
   
+  evaluate <- function(groups, expressions, annotations){
+    eva <- Indicators(groups, expressions, annotations)
+    weighted.ave <- 0
+    for(i in 1:length(groups)){
+      weighted.ave <- weighted.ave + length(groups[[i]]) / length(unlist(groups)) * 100 * eva[[i]][[1]]
+    }
+    return(round(weighted.ave, 2))
+  }
+
   if (!is.null(annotations)){
     if (integrate.method == 'intego'){
       integrated.matrix <- Integration(annotations, expressions, nb.dim.ex, LIM.ASSO, LIM.COR)
@@ -168,12 +177,12 @@ DGE.clust <- function(expressions, annotations=NULL, integrate.method='intego', 
   }
   
   if (integrate.method == 'intego'){
-    evaluation <- Indicators(groups, expressions, annotations)
+    evaluation <- evaluate(groups, expressions, annotations)
     res <- list(groups, integrated.matrix, MCA, vignette, evaluation)
     names(res) <- c('groups', 'integrated.matrix', 'MCA', 'vignette', 'evaluation')
   }
   else {
-    evaluation <- Indicators(groups, sub.expressions, sub.annotations)
+    evaluation <- evaluate(groups, sub.expressions, sub.annotations)
     res <- list(groups, integrated.matrix, PCA, vignette, evaluation)
     names(res) <- c('groups', 'integrated.matrix', 'PCA', 'vignette', 'evaluation')
   }
