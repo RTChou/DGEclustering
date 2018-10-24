@@ -34,19 +34,21 @@ annotate.genes <- function(OrgDb, keyType, genes, GOEnrichment=FALSE, BgGenes=NU
   rownames(ann) <- ds.keys  
   if (GOEnrichment == FALSE){
     for (row in 1:nrow(GO.res)){
-    GO.term <- GO.res[row, 'GO']
-    if (!GO.term %in% colnames(ann))
-      ann[GO.term] <- 0
-    ann[rownames(ann)==GO.res[row, keyType], GO.term] <- 1
+      GO.term <- GO.res[row, 'GO']
+      if (!GO.term %in% colnames(ann))
+        ann[GO.term] <- 0
+      ann[rownames(ann)==GO.res[row, keyType], GO.term] <- 1
     }
   }
   else {
     for (row in 1:nrow(GO.res)){
-    GO.term <- as.character(GO.res[row, 'Description'])
-    if (!GO.term %in% colnames(ann))
-      ann[GO.term] <- 0
-    geneIDs <- unlist(strsplit(GO.res[row, 'geneID'], '/'))
-    ann[ds.keys %in% geneIDs, GO.term] <- 1
+      GO.term <- as.character(GO.res[row, 'Description'])
+      if (is.na(GO.term))
+	next
+      if (!GO.term %in% colnames(ann))
+        ann[GO.term] <- 0
+      geneIDs <- unlist(strsplit(GO.res[row, 'geneID'], '/'))
+      ann[ds.keys %in% geneIDs, GO.term] <- 1
     }
   }
   ann <- ann[,-1]
