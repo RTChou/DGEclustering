@@ -45,6 +45,7 @@ annotate.genes <- function(OrgDb, keyType, genes, GOEnrichment=FALSE, BgGenes=NU
     GO.term <- as.character(GO.res[row, 'Description'])
     if (!GO.term %in% colnames(ann))
       ann[GO.term] <- 0
+    geneIDs <- unlist(strsplit(GO.res[row, 'geneID'], '/'))
     ann[ds.keys %in% geneIDs, GO.term] <- 1
     }
   }
