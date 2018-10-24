@@ -37,7 +37,7 @@ sig.subset <- function(datasets, geneCol, x.dsNumber=1, y.dsNumber=2, x.threshol
              '-o', 'temp',
              '-x', x.threshold,
              '-y', y.threshold,
-             '-y', python.boolean.convert(adjPvalue)))
+             '-a', python.boolean.convert(adjPvalue)))
   # plot the scatter plot
   img <- readPNG(file.path(temp.folder, 'temp_sig_plot.png'))
   g <- grid::rasterGrob(img, interpolate=TRUE) 
